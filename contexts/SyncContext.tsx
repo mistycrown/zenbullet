@@ -12,6 +12,8 @@ interface SyncContextType {
     syncError: string | null;
     config: { url: string; username: string };
     sync: () => Promise<void>;
+    upload: () => Promise<void>;
+    download: () => Promise<void>;
     updateConfig: (url: string, username: string, password?: string) => void;
 }
 
@@ -88,6 +90,59 @@ export const SyncProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return Array.from(map.values());
     };
 
+    const upload = useCallback(async () => {
+        if (!config.url) {
+            setSyncError("WebDAV not configured");
+            return;
+        }
+        setIsSyncing(true);
+        setSyncError(null);
+        try {
+            await webdavService.uploadData(entries, tags);
+            const now = new Date().toISOString();
+            setLastSyncTime(now);
+            localStorage.setItem('zenbullet_last_sync', now);
+            showToast('Upload completed successfully');
+        } catch (err) {
+            console.error("Upload error:", err);
+            setSyncError(err instanceof Error ? err.message : 'Upload failed');
+            showToast('Upload failed: ' + (err instanceof Error ? err.message : 'Unknown error'));
+        } finally {
+            setIsSyncing(false);
+        }
+    }, [entries, tags, config.url, showToast]);
+
+    const download = useCallback(async () => {
+        if (!config.url) {
+            setSyncError("WebDAV not configured");
+            return;
+        }
+        setIsSyncing(true);
+        setSyncError(null);
+        try {
+            const remoteData = await webdavService.downloadData();
+            if (remoteData) {
+                const mergedEntries = mergeEntries(entries, remoteData.entries);
+                const mergedTags = mergeTags(tags, remoteData.tags);
+                setEntries(mergedEntries);
+                setTags(mergedTags);
+
+                const now = new Date().toISOString();
+                setLastSyncTime(now);
+                localStorage.setItem('zenbullet_last_sync', now);
+                showToast('Download & Merge completed');
+            } else {
+                showToast('No data found on server');
+            }
+        } catch (err) {
+            console.error("Download error:", err);
+            setSyncError(err instanceof Error ? err.message : 'Download failed');
+            showToast('Download failed: ' + (err instanceof Error ? err.message : 'Unknown error'));
+        } finally {
+            setIsSyncing(false);
+        }
+    }, [entries, tags, config.url, setEntries, setTags, showToast]);
+
     const sync = useCallback(async () => {
         if (!config.url) {
             setSyncError("WebDAV not configured");
@@ -139,6 +194,8 @@ export const SyncProvider: React.FC<{ children: React.ReactNode }> = ({ children
             syncError,
             config,
             sync,
+            upload,
+            download,
             updateConfig
         }}>
             {children}

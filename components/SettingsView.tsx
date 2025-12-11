@@ -152,7 +152,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({
   currentView,
   onViewChange
 }) => {
-  const { entries, tags, addTag, removeTag, renameTag, reorderTags, importData, isSyncing, lastSyncTime, syncError, syncConfig, sync, updateSyncConfig, clearData, restoreDefaults, showToast } = useZenContext();
+  const { entries, tags, addTag, removeTag, renameTag, reorderTags, importData, isSyncing, lastSyncTime, syncError, syncConfig, sync, upload, download, updateSyncConfig, clearData, restoreDefaults, showToast } = useZenContext();
 
   // -- AI Config State --
   const [provider, setProvider] = useState('openai');
@@ -704,27 +704,37 @@ const SettingsView: React.FC<SettingsViewProps> = ({
               )}
               <div className="flex gap-3">
                 <button
-                  onClick={sync}
+                  onClick={upload}
                   disabled={isSyncing}
-                  className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium text-sm transition-colors disabled:opacity-50"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium text-sm transition-colors disabled:opacity-50"
+                  title="Upload local data to the cloud (overwrites cloud)"
                 >
-                  {isSyncing ? <Loader size={16} className="animate-spin" /> : <RefreshCw size={16} />}
-                  {isSyncing ? 'Syncing...' : 'Sync Now'}
+                  {isSyncing ? <Loader size={16} className="animate-spin" /> : <Upload size={16} />}
+                  {isSyncing ? 'Syncing...' : 'Upload to Cloud'}
                 </button>
                 <button
-                  onClick={() => openConfirm(
-                    'Clear Sync Configuration?',
-                    'Are you sure you want to clear your WebDAV sync configuration? This will disconnect your sync.',
-                    () => updateSyncConfig('', '', ''),
-                    true,
-                    'Clear Config'
-                  )}
-                  className="flex items-center justify-center gap-2 px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg font-medium text-sm transition-colors border border-red-100"
+                  onClick={download}
+                  disabled={isSyncing}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-stone-100 hover:bg-stone-200 text-ink rounded-lg font-medium text-sm transition-colors disabled:opacity-50"
+                  title="Download and merge data from cloud (keeps local changes)"
                 >
-                  <Trash size={16} />
-                  Clear Sync Config
+                  {isSyncing ? <Loader size={16} className="animate-spin" /> : <Download size={16} />}
+                  {isSyncing ? 'Syncing...' : 'Download & Merge'}
                 </button>
               </div>
+              <button
+                onClick={() => openConfirm(
+                  'Clear Sync Configuration?',
+                  'Are you sure you want to clear your WebDAV sync configuration? This will disconnect your sync.',
+                  () => updateSyncConfig('', '', ''),
+                  true,
+                  'Clear Config'
+                )}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg font-medium text-sm transition-colors border border-red-100"
+              >
+                <Trash size={16} />
+                Clear Sync Config
+              </button>
             </>
           ) : (
             <p className="text-sm text-stone-500">No WebDAV configuration found. Please set up your server details above.</p>

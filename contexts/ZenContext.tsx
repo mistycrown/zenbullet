@@ -39,6 +39,8 @@ interface ZenContextType {
   syncError: string | null;
   syncConfig: { url: string; username: string };
   sync: () => Promise<void>;
+  upload: () => Promise<void>;
+  download: () => Promise<void>;
   updateSyncConfig: (url: string, username: string, password?: string) => void;
 }
 
@@ -47,7 +49,7 @@ const useAggregatedZenContext = (): ZenContextType => {
   const { toast, showToast, hideToast } = useToast();
   const { entries, addEntry, updateEntry, deleteEntry, batchAddEntries, setEntries } = useEntryContext();
   const { tags, addTag, removeTag, renameTag, reorderTags, setTags } = useTagContext();
-  const { isSyncing, lastSyncTime, syncError, config: syncConfig, sync, updateConfig: updateSyncConfig } = useSyncContext();
+  const { isSyncing, lastSyncTime, syncError, config: syncConfig, sync, upload, download, updateConfig: updateSyncConfig } = useSyncContext();
 
   const importData = useCallback((newEntries: Entry[], newTags: Tag[]) => {
     setEntries(newEntries);
@@ -94,6 +96,8 @@ const useAggregatedZenContext = (): ZenContextType => {
     syncError,
     syncConfig,
     sync,
+    upload,
+    download,
     updateSyncConfig
   };
 };

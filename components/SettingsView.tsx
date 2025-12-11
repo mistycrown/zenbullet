@@ -716,10 +716,10 @@ const SettingsView: React.FC<SettingsViewProps> = ({
                   onClick={download}
                   disabled={isSyncing}
                   className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-stone-100 hover:bg-stone-200 text-ink rounded-lg font-medium text-sm transition-colors disabled:opacity-50"
-                  title="Download and merge data from cloud (keeps local changes)"
+                  title="从云端下载并完全替换本地数据（警告：本地未上传的数据将丢失）"
                 >
                   {isSyncing ? <Loader size={16} className="animate-spin" /> : <Download size={16} />}
-                  {isSyncing ? 'Syncing...' : 'Download & Merge'}
+                  {isSyncing ? '同步中...' : '从云端下载'}
                 </button>
               </div>
               <button

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { Entry } from '../types';
-import { getNextDate, INITIAL_ENTRIES } from '../utils';
+import { getNextDate, getISODate, INITIAL_ENTRIES } from '../utils';
 import { useToast } from './ToastContext';
 
 interface EntryContextType {
@@ -79,6 +79,11 @@ export const EntryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             const isCompleting = newStatus === 'done' && entry.status === 'todo';
             const isRecurring = entry.recurrence;
             let finalUpdates = { ...updates, updatedAt: new Date().toISOString() };
+
+            // 自动设置完成日期：如果条目无日期且正在完成
+            if (!entry.date && isCompleting) {
+                finalUpdates.date = getISODate(new Date());
+            }
 
             if (isRecurring && isCompleting && entry.date) {
                 const nextDate = getNextDate(entry.date, entry.recurrence!);

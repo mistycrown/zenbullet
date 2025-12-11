@@ -278,8 +278,9 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({
                 <div
                   onClick={() => onDateClick(day)}
                   className="w-10 md:w-12 flex flex-col items-center pt-1 cursor-pointer flex-shrink-0"
+                  title="Jump to this date"
                 >
-                  <span className={`text-xs font-bold uppercase mb-0.5 ${isToday ? 'text-blue-600' : 'text-stone-400 group-hover:text-ink'}`}>
+                  <span className={`text-xs font-bold uppercase mb-0.5 ${isToday ? 'text-blue-600' : 'text-stone-400'}`}>
                     {day.toLocaleDateString('en-US', { weekday: 'short' })}
                   </span>
                   <span className={`text-lg font-bold leading-none ${isToday ? 'bg-blue-600 text-white w-8 h-8 flex items-center justify-center rounded-full shadow-sm' : 'text-ink'}`}>

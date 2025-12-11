@@ -118,7 +118,7 @@ const EntryDetails: React.FC<EntryDetailsProps> = ({
   if (entry.type === 'weekly-review') {
     return (
       <div className="h-full flex flex-col bg-white overflow-y-auto">
-        <div className="p-6 border-b border-stone-100 flex justify-between items-center sticky top-0 bg-white z-10">
+        <div className="p-6 border-b border-stone-100 flex justify-between items-center sticky top-0 bg-white z-50 pt-safe md:pt-0 shadow-sm">
           <div className="flex items-center gap-3">
             <button onClick={onToggleSidebar} className="text-stone-400 hover:text-ink"><PanelRightClose size={20} /></button>
             <h3 className="font-bold text-xl font-hand text-ink">Weekly Review</h3>
@@ -148,7 +148,7 @@ const EntryDetails: React.FC<EntryDetailsProps> = ({
 
     return (
       <div className="h-full flex flex-col bg-white overflow-y-auto animate-in slide-in-from-right duration-200">
-        <div className="p-6 border-b border-stone-100 flex justify-between items-center sticky top-0 bg-white z-10">
+        <div className="p-6 border-b border-stone-100 flex justify-between items-center sticky top-0 bg-white z-50 pt-safe md:pt-0 shadow-sm">
           <div className="flex items-center gap-3">
             <button onClick={onClose} className="md:hidden text-stone-600 hover:text-ink -ml-2 p-2 rounded-full"><ChevronLeft size={24} /></button>
             <button onClick={onToggleSidebar} className="hidden md:block text-stone-400 hover:text-ink p-1 rounded hover:bg-stone-100"><PanelRightClose size={20} /></button>
@@ -253,7 +253,7 @@ const EntryDetails: React.FC<EntryDetailsProps> = ({
 
   return (
     <div className="h-full flex flex-col bg-white overflow-y-auto animate-in slide-in-from-right duration-200">
-      <div className="p-6 border-b border-stone-100 flex justify-between items-center sticky top-0 bg-white z-10">
+      <div className="p-6 border-b border-stone-100 flex justify-between items-center sticky top-0 bg-white z-50 pt-safe md:pt-0 shadow-sm">
         <div className="flex items-center gap-3">
           <button onClick={onClose} className="md:hidden text-stone-600 hover:text-ink -ml-2 p-2 rounded-full"><ChevronLeft size={24} /></button>
           <button

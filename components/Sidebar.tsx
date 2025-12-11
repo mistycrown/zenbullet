@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Inbox, LayoutGrid, Calendar as CalendarIcon, Search, Settings, ChevronLeft, ChevronRight, Sparkles, FolderKanban, BookOpen, RefreshCw } from 'lucide-react';
+import { Inbox, LayoutGrid, Calendar as CalendarIcon, Search, Settings, ChevronLeft, ChevronRight, Sparkles, FolderKanban, BookOpen, Upload, Download } from 'lucide-react';
 import { getTagStyles } from '../utils';
 import DynamicIcon from './DynamicIcon';
 import { useZenContext } from '../contexts/ZenContext';
@@ -12,7 +12,7 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({
   onOpenAIModal
 }) => {
-  const { tags, entries, sync, isSyncing } = useZenContext();
+  const { tags, entries, upload, download, isSyncing } = useZenContext();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -40,14 +40,24 @@ const Sidebar: React.FC<SidebarProps> = ({
         {!isCollapsed && (
           <div className="flex items-center justify-between mb-2 px-3">
             <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider">Views</h3>
-            <button
-              onClick={sync}
-              disabled={isSyncing}
-              className={`p-1 rounded hover:bg-stone-100 transition-colors ${isSyncing ? 'text-blue-500' : 'text-stone-400 hover:text-ink'}`}
-              title="Quick Sync"
-            >
-              <RefreshCw size={14} className={isSyncing ? 'animate-spin' : ''} />
-            </button>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={upload}
+                disabled={isSyncing}
+                className={`p-1 rounded hover:bg-blue-50 transition-colors ${isSyncing ? 'text-blue-400' : 'text-stone-400 hover:text-blue-600'}`}
+                title="上传到云端"
+              >
+                <Upload size={14} />
+              </button>
+              <button
+                onClick={download}
+                disabled={isSyncing}
+                className={`p-1 rounded hover:bg-stone-100 transition-colors ${isSyncing ? 'text-blue-400' : 'text-stone-400 hover:text-ink'}`}
+                title="从云端下载"
+              >
+                <Download size={14} />
+              </button>
+            </div>
           </div>
         )}
         <nav className="space-y-1">
@@ -100,17 +110,6 @@ const Sidebar: React.FC<SidebarProps> = ({
               {!isCollapsed && <span>Smart Add</span>}
             </button>
           )}
-
-          {/* Quick Sync Button */}
-          <button
-            onClick={sync}
-            disabled={isSyncing}
-            className={`w-full flex items-center gap-3 rounded-xl transition-colors text-sm font-medium ${isSyncing ? 'text-blue-600 bg-blue-50' : 'text-stone-500 hover:bg-white/60 hover:text-stone-700'} ${isCollapsed ? 'justify-center py-3' : 'px-3 py-2.5'}`}
-            title="Quick Sync"
-          >
-            <RefreshCw size={18} className={isSyncing ? 'animate-spin' : ''} />
-            {!isCollapsed && <span>{isSyncing ? 'Syncing...' : 'Quick Sync'}</span>}
-          </button>
 
         </nav>
       </div>

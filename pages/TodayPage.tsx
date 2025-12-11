@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import {
-    ChevronLeft, ChevronRight, RotateCcw, Settings, Sparkles, Inbox, FolderKanban, BookOpen, Search, Calendar, RefreshCw
+    ChevronLeft, ChevronRight, RotateCcw, Sparkles, Inbox, FolderKanban, BookOpen, Search, Calendar, Upload, Download
 } from 'lucide-react';
 import {
     DndContext,
@@ -57,7 +57,7 @@ export const TodayPage: React.FC<TodayPageProps> = ({
     onNavigate,
     isMobileListsView = false
 }) => {
-    const { entries, tags, addEntry, updateEntry, showToast, sync, isSyncing } = useZenContext();
+    const { entries, tags, addEntry, updateEntry, showToast, upload, download, isSyncing } = useZenContext();
     const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null); // Local state for selection highlighting
 
     // Computed data
@@ -191,8 +191,8 @@ export const TodayPage: React.FC<TodayPageProps> = ({
     if (isMobileListsView) {
         return (
             <div className="flex-1 flex flex-col h-full">
-                <header className="shrink-0 flex items-center justify-between px-4 md:px-6 py-5 bg-paper z-10 pt-safe md:pt-5">
-                    <h1 className="text-3xl font-bold text-ink font-hand tracking-wide">Collection</h1>
+                <header className="shrink-0 flex items-center justify-between px-4 md:px-6 bg-paper z-10 pt-safe md:pt-0">
+                    <h1 className="text-2xl font-bold text-ink font-hand tracking-wide">Collection</h1>
                 </header>
                 <div className="p-4 md:p-6 space-y-2 flex-1 overflow-y-auto">
                     <button onClick={onOpenSearch} className="w-full flex items-center gap-3 p-3 mb-4 bg-stone-100 text-stone-500 rounded-xl">
@@ -232,74 +232,106 @@ export const TodayPage: React.FC<TodayPageProps> = ({
 
     return (
         <div className="flex-1 flex flex-col h-full bg-paper relative">
-            {/* Mobile Inbox FAB */}
-            <button
-                onClick={() => onNavigate('today', isInbox ? null : 'Inbox')}
-                className="fixed z-30 bottom-24 right-4 md:bottom-8 md:right-8 p-3 rounded-full shadow-lg hover:scale-105 transition-all bg-ink text-white md:hidden"
-                title={isInbox ? "Back to Today" : "Go to Inbox"}
-            >
-                {isInbox ? <Calendar size={24} /> : <Inbox size={24} />}
-            </button>
+            {/* Mobile FABs - AI按钮在上，Inbox切换在下 */}
+            <div className="fixed z-30 bottom-24 right-4 flex flex-col gap-3 md:hidden">
+                <button
+                    onClick={onOpenAIModal}
+                    className="p-3 rounded-full shadow-lg hover:scale-105 transition-all bg-purple-500 text-white"
+                    title="Smart Add"
+                >
+                    <Sparkles size={24} />
+                </button>
+                <button
+                    onClick={() => onNavigate('today', isInbox ? null : 'Inbox')}
+                    className="p-3 rounded-full shadow-lg hover:scale-105 transition-all bg-ink text-white"
+                    title={isInbox ? "Back to Today" : "Go to Inbox"}
+                >
+                    {isInbox ? <Calendar size={24} /> : <Inbox size={24} />}
+                </button>
+            </div>
 
-            {/* Header */}
-            <header className="shrink-0 flex items-center justify-between px-4 md:px-6 py-5 bg-paper z-10 pt-safe md:pt-5">
-                <div className="flex items-center gap-4">
-                    {/* Mobile Back Button if filter active */}
-                    {activeTagFilter && activeTagFilter !== 'Inbox' && (
-                        <button onClick={onBack} className="md:hidden p-2 -ml-2 rounded-lg hover:bg-stone-200 text-stone-600">
-                            <ChevronLeft size={24} />
-                        </button>
-                    )}
+            {/* Header - 精简版 */}
+            <header className="shrink-0 px-4 md:px-6 bg-paper z-10 pt-safe md:pt-0">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                        {/* Mobile Back Button if filter active */}
+                        {activeTagFilter && activeTagFilter !== 'Inbox' && (
+                            <button onClick={onBack} className="md:hidden p-2 -ml-2 rounded-lg hover:bg-stone-200 text-stone-600">
+                                <ChevronLeft size={24} />
+                            </button>
+                        )}
 
-                    {!activeTagFilter ? (
-                        <h1 className="text-3xl font-bold text-ink font-hand tracking-wide">
-                            {formatDate(currentDate)}
-                        </h1>
-                    ) : (
-                        <div className="flex items-center gap-2">
-                            <span className={`text-sm font-bold px-3 py-1 rounded-full ${getTagStyles(activeTagFilter, tags)}`}>
-                                #{activeTagFilter}
-                            </span>
-                        </div>
-                    )}
-                </div>
-
-                <div className="flex items-center gap-2">
-                    {!activeTagFilter && (
-                        <div className="flex items-center gap-4">
-                            {dateKey !== todayKey && (
-                                <button onClick={() => onDateChange(new Date())} className="p-2 text-stone-400 hover:text-ink hover:bg-stone-100 rounded-full transition-colors" title="Back to Today">
-                                    <RotateCcw size={18} />
-                                </button>
-                            )}
-                            <div className="flex gap-2">
-                                <button onClick={() => changeDate(-1)} className="p-2 hover:bg-stone-200 rounded-full text-stone-600 transition-colors">
-                                    <ChevronLeft size={20} />
-                                </button>
-                                <button onClick={() => changeDate(1)} className="p-2 hover:bg-stone-200 rounded-full text-stone-600 transition-colors">
-                                    <ChevronRight size={20} />
-                                </button>
+                        {!activeTagFilter ? (
+                            <h1 className="text-2xl font-bold text-ink font-hand tracking-wide">
+                                {formatDate(currentDate)}
+                            </h1>
+                        ) : (
+                            <div className="flex items-center gap-2">
+                                <span className={`text-sm font-bold px-3 py-1 rounded-full ${getTagStyles(activeTagFilter, tags)}`}>
+                                    #{activeTagFilter}
+                                </span>
                             </div>
-                        </div>
-                    )}
+                        )}
+                    </div>
 
+                    {/* 右侧工具栏 - 只保留上传下载 */}
                     <div className="flex md:hidden items-center gap-1">
-                        <button onClick={onOpenAIModal} className="p-2 text-purple-500 hover:bg-purple-50 rounded-full transition-colors">
-                            <Sparkles size={20} />
+                        <button
+                            onClick={upload}
+                            disabled={isSyncing}
+                            className={`p-2 hover:bg-blue-50 rounded-full transition-colors ${isSyncing ? 'text-blue-500' : 'text-stone-400 hover:text-blue-600'}`}
+                            title="上传到云端"
+                        >
+                            <Upload size={20} />
                         </button>
                         <button
-                            onClick={sync}
+                            onClick={download}
                             disabled={isSyncing}
                             className={`p-2 hover:bg-stone-100 rounded-full transition-colors ${isSyncing ? 'text-blue-500' : 'text-stone-400 hover:text-ink'}`}
-                            title="Quick Sync"
+                            title="从云端下载"
                         >
-                            <RefreshCw size={20} className={isSyncing ? 'animate-spin' : ''} />
-                        </button>
-                        <button onClick={onOpenSettings} className="p-2 text-stone-400 hover:text-ink hover:bg-stone-100 rounded-full transition-colors">
-                            <Settings size={20} />
+                            <Download size={20} />
                         </button>
                     </div>
+
+                    {/* 桌面端工具栏 */}
+                    <div className="hidden md:flex items-center gap-2">
+                        {!activeTagFilter && (
+                            <div className="flex items-center gap-4">
+                                {dateKey !== todayKey && (
+                                    <button onClick={() => onDateChange(new Date())} className="p-2 text-stone-400 hover:text-ink hover:bg-stone-100 rounded-full transition-colors" title="Back to Today">
+                                        <RotateCcw size={18} />
+                                    </button>
+                                )}
+                                <div className="flex gap-2">
+                                    <button onClick={() => changeDate(-1)} className="p-2 hover:bg-stone-200 rounded-full text-stone-600 transition-colors">
+                                        <ChevronLeft size={20} />
+                                    </button>
+                                    <button onClick={() => changeDate(1)} className="p-2 hover:bg-stone-200 rounded-full text-stone-600 transition-colors">
+                                        <ChevronRight size={20} />
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
+
+                {/* 日期导航 - 移动端，日期下方靠左对齐 */}
+                {!activeTagFilter && (
+                    <div className="flex items-center gap-2 mt-2 md:hidden">
+                        <button onClick={() => changeDate(-1)} className="p-1.5 hover:bg-stone-200 rounded-full text-stone-500 transition-colors">
+                            <ChevronLeft size={18} />
+                        </button>
+                        <button onClick={() => changeDate(1)} className="p-1.5 hover:bg-stone-200 rounded-full text-stone-500 transition-colors">
+                            <ChevronRight size={18} />
+                        </button>
+                        {dateKey !== todayKey && (
+                            <button onClick={() => onDateChange(new Date())} className="p-1.5 text-stone-400 hover:text-ink hover:bg-stone-100 rounded-full transition-colors" title="回到今天">
+                                <RotateCcw size={16} />
+                            </button>
+                        )}
+                    </div>
+                )}
             </header>
 
             {/* Content */}

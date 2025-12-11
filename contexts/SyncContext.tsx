@@ -122,26 +122,25 @@ export const SyncProvider: React.FC<{ children: React.ReactNode }> = ({ children
         try {
             const remoteData = await webdavService.downloadData();
             if (remoteData) {
-                const mergedEntries = mergeEntries(entries, remoteData.entries);
-                const mergedTags = mergeTags(tags, remoteData.tags);
-                setEntries(mergedEntries);
-                setTags(mergedTags);
+                // 全量覆盖：直接用远程数据替换本地数据
+                setEntries(remoteData.entries);
+                setTags(remoteData.tags);
 
                 const now = new Date().toISOString();
                 setLastSyncTime(now);
                 localStorage.setItem('zenbullet_last_sync', now);
-                showToast('Download success: Cloud changes merged into local');
+                showToast('从云端下载成功：本地数据已被云端数据完全替换');
             } else {
-                showToast('No data found on server');
+                showToast('服务器上没有找到数据');
             }
         } catch (err) {
             console.error("Download error:", err);
             setSyncError(err instanceof Error ? err.message : 'Download failed');
-            showToast('Download failed: ' + (err instanceof Error ? err.message : 'Unknown error'));
+            showToast('下载失败: ' + (err instanceof Error ? err.message : 'Unknown error'));
         } finally {
             setIsSyncing(false);
         }
-    }, [entries, tags, config.url, setEntries, setTags, showToast]);
+    }, [config.url, setEntries, setTags, showToast]);
 
     const sync = useCallback(async () => {
         if (!config.url) {

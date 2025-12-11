@@ -62,7 +62,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
   return (
     // Added pb-20 on mobile to prevent content from being covered by fixed bottom nav
     <div className="bg-paper h-full flex flex-col relative select-none">
-      <div className="flex justify-between items-center p-4 shrink-0 bg-paper z-10 pt-safe md:pt-4">
+      <div className="flex justify-between items-center px-4 md:px-0 shrink-0 bg-paper z-10 pt-safe md:pt-0">
         <button
           onClick={() => {
             setPickerYear(currentDate.getFullYear());

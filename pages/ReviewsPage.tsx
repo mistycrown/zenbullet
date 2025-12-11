@@ -50,14 +50,14 @@ export const ReviewsPage: React.FC<ReviewsPageProps> = ({
 
     return (
         <div className="flex-1 flex flex-col h-full bg-paper">
-            <header className="shrink-0 flex items-center justify-between px-6 py-5 bg-paper z-10">
+            <header className="shrink-0 flex items-center justify-between px-4 md:px-6 bg-paper z-10 pt-safe md:pt-0">
                 <div className="flex items-center gap-4">
                     {onBack && (
                         <button onClick={onBack} className="md:hidden p-2 -ml-2 rounded-lg hover:bg-stone-200 text-stone-600">
                             <ChevronLeft size={24} />
                         </button>
                     )}
-                    <h1 className="text-3xl font-bold text-ink font-hand tracking-wide">Weekly Reviews</h1>
+                    <h1 className="text-2xl font-bold text-ink font-hand tracking-wide">Weekly Reviews</h1>
                 </div>
             </header>
 

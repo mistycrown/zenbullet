@@ -3,6 +3,7 @@ import { Routes, Route, useNavigate, useLocation, useParams } from 'react-router
 import { useZenContext } from './contexts/ZenContext';
 import { ChevronLeft } from 'lucide-react';
 import { getISODate, addDays, getStartOfWeek } from './utils';
+import { App as CapacitorApp } from '@capacitor/app';
 
 // Components
 import { Layout } from './components/Layout';
@@ -96,14 +97,6 @@ export default function App() {
     syncConfig
   } = useZenContext();
 
-  // Auto-sync on mount
-  useEffect(() => {
-    if (syncConfig?.url) {
-      sync();
-    }
-  }, [syncConfig?.url]); // Sync when config is available/loaded
-
-
   const navigate = useNavigate();
 
   // Global State (Persistent UI State)
@@ -124,6 +117,24 @@ export default function App() {
   const selectedEntry = useMemo(() => {
     return selectedEntryId ? entries.find(e => e.id === selectedEntryId) || null : null;
   }, [entries, selectedEntryId]);
+
+  // Handle Android back button
+  const location = useLocation();
+  useEffect(() => {
+    const handleBackButton = CapacitorApp.addListener('backButton', ({ canGoBack }) => {
+      // 如果在根路径，退出应用
+      if (location.pathname === '/' || !canGoBack) {
+        CapacitorApp.exitApp();
+      } else {
+        // 否则返回上一页
+        window.history.back();
+      }
+    });
+
+    return () => {
+      handleBackButton.then(listener => listener.remove());
+    };
+  }, [location.pathname]);
 
 
   const handleCreateWeeklyReview = () => {

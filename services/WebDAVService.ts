@@ -1,6 +1,7 @@
 
 import { createClient, WebDAVClient } from 'webdav';
 import { Entry, Tag } from '../types';
+import { Capacitor } from '@capacitor/core';
 
 export interface SyncData {
     version: number;
@@ -30,7 +31,12 @@ export class WebDAVService {
     }
 
     private getProxyUrl(url: string): string {
-        // Use the proxy path for all Jianguoyun requests to avoid CORS issues
+        // 在原生平台（Android/iOS）上，CapacitorHttp 会自动处理 CORS，直接使用原始 URL
+        if (Capacitor.isNativePlatform()) {
+            return url;
+        }
+
+        // 在 Web 平台上，使用代理来绑定坚果云请求避免 CORS 问题
         if (url.includes('jianguoyun.com')) {
             return url.replace(/^https?:\/\/dav\.jianguoyun\.com\/dav/, '/api/webdav');
         }
@@ -71,13 +77,15 @@ export class WebDAVService {
         if (!this.client) throw new Error('WebDAV client not initialized');
 
         try {
-            // Check if file exists
-            const exists = await this.client.exists(`/${this.filename}`);
-            if (!exists) return null;
-
+            // 直接尝试下载，不使用 exists() 因为它使用 PROPFIND 方法在原生平台可能不支持
             const content = await this.client.getFileContents(`/${this.filename}`, { format: 'text' });
             return JSON.parse(content as string);
-        } catch (error) {
+        } catch (error: any) {
+            // 如果是 404 错误（文件不存在），返回 null
+            if (error?.response?.status === 404 || error?.status === 404) {
+                console.log('WebDAV file not found, returning null');
+                return null;
+            }
             console.error('WebDAV download failed:', error);
             throw error;
         }

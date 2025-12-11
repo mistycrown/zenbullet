@@ -30,7 +30,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
 
     return (
         <div className="flex-1 flex flex-col h-full bg-paper">
-            <header className="shrink-0 flex items-center gap-4 px-4 md:px-6 py-5 bg-paper z-10 pt-safe md:pt-5">
+            <header className="shrink-0 flex items-center gap-4 px-4 md:px-6 bg-paper z-10 pt-safe md:pt-0">
                 {(isNested || isMobile) && (
                     <button
                         onClick={onBack}
@@ -39,7 +39,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                         <ChevronLeft size={24} />
                     </button>
                 )}
-                <h1 className="text-3xl font-bold text-ink font-hand tracking-wide">
+                <h1 className="text-2xl font-bold text-ink font-hand tracking-wide">
                     {getTitle()}
                 </h1>
             </header>

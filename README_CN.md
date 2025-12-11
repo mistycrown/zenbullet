@@ -62,7 +62,7 @@
     npm run dev
     ```
 
-4.  在浏览器中打开 `http://localhost:3000`。
+4.  在浏览器中打开 `http://localhost:5173`。
 
 ## 🤖 配置 AI
 

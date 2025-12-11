@@ -62,7 +62,7 @@ It combines traditional task management with modern features like AI-assisted sc
     npm run dev
     ```
 
-4.  Open your browser at `http://localhost:3000`.
+4.  Open your browser at `http://localhost:5173`.
 
 ## 🤖 Configuring AI
 

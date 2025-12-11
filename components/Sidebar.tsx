@@ -24,7 +24,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     return location.pathname.startsWith(path);
   };
 
-  const currentTag = location.pathname.startsWith('/tag/') ? decodeURIComponent(location.pathname.split('/tag/')[1]) : null;
+  const currentTag = location.pathname.startsWith('/collection/') ? decodeURIComponent(location.pathname.split('/collection/')[1]) : null;
 
   return (
     <aside
@@ -40,10 +40,10 @@ const Sidebar: React.FC<SidebarProps> = ({
         {!isCollapsed && <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-2 px-3">Views</h3>}
         <nav className="space-y-1">
           <button
-            onClick={() => navigate('/tag/Inbox')}
-            className={`w-full flex items-center rounded-xl transition-colors text-sm font-medium ${isActive('/tag/Inbox')
-                ? 'bg-paper text-ink'
-                : 'text-stone-500 hover:bg-paper/50 hover:text-stone-700'
+            onClick={() => navigate('/collection/Inbox')}
+            className={`w-full flex items-center rounded-xl transition-colors text-sm font-medium ${isActive('/collection/Inbox')
+              ? 'bg-paper text-ink'
+              : 'text-stone-500 hover:bg-paper/50 hover:text-stone-700'
               } ${isCollapsed ? 'justify-center py-3' : 'px-3 py-2.5 justify-between'}`}
             title="Inbox"
           >
@@ -67,8 +67,8 @@ const Sidebar: React.FC<SidebarProps> = ({
               key={item.path}
               onClick={() => navigate(item.path)}
               className={`w-full flex items-center gap-3 rounded-xl transition-colors text-sm font-medium ${isActive(item.path, item.exact) && !currentTag
-                  ? 'bg-paper text-ink'
-                  : 'text-stone-500 hover:bg-paper/50 hover:text-stone-700'
+                ? 'bg-paper text-ink'
+                : 'text-stone-500 hover:bg-paper/50 hover:text-stone-700'
                 } ${isCollapsed ? 'justify-center py-3' : 'px-3 py-2.5'}`}
               title={item.label}
             >
@@ -116,7 +116,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             return (
               <button
                 key={tag.name}
-                onClick={() => navigate(`/tag/${encodeURIComponent(tag.name)}`)}
+                onClick={() => navigate(`/collection/${encodeURIComponent(tag.name)}`)}
                 className={`w-full flex items-center gap-3 rounded-lg transition-colors text-sm ${currentTag === tag.name ? 'bg-paper text-ink font-medium' : 'text-stone-500 hover:bg-stone-50'
                   } ${isCollapsed ? 'justify-center py-2' : 'px-3 py-2'}`}
                 title={tag.name}

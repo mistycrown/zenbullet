@@ -23,7 +23,7 @@ export const CollectionMenuPage: React.FC = () => {
                     <span className="font-medium">Search...</span>
                 </button>
 
-                <button onClick={() => navigate('/tag/Inbox')} className="w-full flex items-center justify-between p-4 bg-white rounded-xl shadow-sm border border-stone-100 transition-transform active:scale-[0.98]">
+                <button onClick={() => navigate('/collection/Inbox')} className="w-full flex items-center justify-between p-4 bg-white rounded-xl shadow-sm border border-stone-100 transition-transform active:scale-[0.98]">
                     <div className="flex items-center gap-3">
                         <Inbox size={20} className="text-stone-500" />
                         <span className="font-medium">Inbox</span>
@@ -40,7 +40,7 @@ export const CollectionMenuPage: React.FC = () => {
                 </button>
                 <div className="h-px bg-stone-100 my-2 mx-2"></div>
                 {tags.map(tag => (
-                    <button key={tag.name} onClick={() => navigate(`/tag/${encodeURIComponent(tag.name)}`)} className="w-full flex items-center gap-3 p-4 bg-white rounded-xl shadow-sm border border-stone-100 transition-transform active:scale-[0.98]">
+                    <button key={tag.name} onClick={() => navigate(`/collection/${encodeURIComponent(tag.name)}`)} className="w-full flex items-center gap-3 p-4 bg-white rounded-xl shadow-sm border border-stone-100 transition-transform active:scale-[0.98]">
                         <DynamicIcon name={tag.icon} size={20} className={`opacity-60 ${getTagStyles(tag.name, tags).split(' ')[1]}`} />
                         <span className="font-medium">{tag.name}</span>
                     </button>

@@ -10,7 +10,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ onAdd }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const isActive = (path: string) => location.pathname === path || (path === '/' && location.pathname.startsWith('/tag/'));
+  const isActive = (path: string) => location.pathname === path || (path === '/' && location.pathname.startsWith('/collection/'));
 
   return (
     <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-stone-200 px-4 py-2 flex justify-between items-center z-40 pb-safe">

@@ -43,7 +43,7 @@ const TodayRoute = ({
       onOpenSearch={() => navigate('/search')}
       onBack={() => navigate('/')}
       onNavigate={(tab, t) => {
-        if (tab === 'today') navigate(t ? `/tag/${t}` : '/');
+        if (tab === 'today') navigate(t ? `/collection/${t}` : '/');
         else if (tab === 'projects') navigate('/projects');
         else if (tab === 'reviews') navigate('/reviews');
       }}
@@ -184,7 +184,7 @@ export default function App() {
           />
         } />
 
-        <Route path="/tag/:tag" element={
+        <Route path="/collection/:tag" element={
           <TodayRoute
             currentDate={currentDate}
             onDateChange={setCurrentDate}

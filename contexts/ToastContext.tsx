@@ -46,3 +46,27 @@ export const useToast = () => {
     }
     return context;
 };
+
+import { X } from 'lucide-react';
+
+export const ToastDisplay = () => {
+    const { toast, hideToast } = useToast();
+    if (!toast) return null;
+
+    return (
+        <div className="fixed bottom-20 md:bottom-8 left-1/2 -translate-x-1/2 z-[60] bg-ink text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-4 animate-in slide-in-from-bottom-5 fade-in duration-300">
+            <span className="text-sm font-medium">{toast.message}</span>
+            {toast.action && (
+                <button
+                    onClick={toast.action.onClick}
+                    className="text-sm font-bold text-blue-300 hover:text-blue-200 transition-colors"
+                >
+                    {toast.action.label}
+                </button>
+            )}
+            <button onClick={hideToast} className="text-stone-400 hover:text-white transition-colors">
+                <X size={16} />
+            </button>
+        </div>
+    );
+};

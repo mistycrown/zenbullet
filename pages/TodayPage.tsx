@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import {
-    ChevronLeft, ChevronRight, RotateCcw, Settings, Sparkles, Inbox, FolderKanban, BookOpen, Search, Calendar
+    ChevronLeft, ChevronRight, RotateCcw, Settings, Sparkles, Inbox, FolderKanban, BookOpen, Search, Calendar, RefreshCw
 } from 'lucide-react';
 import {
     DndContext,
@@ -57,7 +57,7 @@ export const TodayPage: React.FC<TodayPageProps> = ({
     onNavigate,
     isMobileListsView = false
 }) => {
-    const { entries, tags, addEntry, updateEntry, showToast } = useZenContext();
+    const { entries, tags, addEntry, updateEntry, showToast, sync, isSyncing } = useZenContext();
     const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null); // Local state for selection highlighting
 
     // Computed data
@@ -286,6 +286,14 @@ export const TodayPage: React.FC<TodayPageProps> = ({
                     <div className="flex md:hidden items-center gap-1">
                         <button onClick={onOpenAIModal} className="p-2 text-purple-500 hover:bg-purple-50 rounded-full transition-colors">
                             <Sparkles size={20} />
+                        </button>
+                        <button
+                            onClick={sync}
+                            disabled={isSyncing}
+                            className={`p-2 hover:bg-stone-100 rounded-full transition-colors ${isSyncing ? 'text-blue-500' : 'text-stone-400 hover:text-ink'}`}
+                            title="Quick Sync"
+                        >
+                            <RefreshCw size={20} className={isSyncing ? 'animate-spin' : ''} />
                         </button>
                         <button onClick={onOpenSettings} className="p-2 text-stone-400 hover:text-ink hover:bg-stone-100 rounded-full transition-colors">
                             <Settings size={20} />

@@ -61,8 +61,8 @@ const CalendarView: React.FC<CalendarViewProps> = ({
 
   return (
     // Added pb-20 on mobile to prevent content from being covered by fixed bottom nav
-    <div className="bg-white h-full flex flex-col overflow-hidden relative pb-20 md:pb-0 select-none">
-      <div className="flex justify-between items-center p-4 shrink-0 bg-stone-50 border-b border-stone-100 z-10 pt-safe md:pt-4">
+    <div className="bg-paper h-full flex flex-col relative select-none">
+      <div className="flex justify-between items-center p-4 shrink-0 bg-paper z-10 pt-safe md:pt-4">
         <button
           onClick={() => {
             setPickerYear(currentDate.getFullYear());
@@ -126,15 +126,15 @@ const CalendarView: React.FC<CalendarViewProps> = ({
         </div>
       )}
 
-      <div className="grid grid-cols-7 gap-px bg-stone-100 shrink-0">
+      <div className="grid grid-cols-7 gap-0 shrink-0 mb-2">
         {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(d => (
-          <div key={d} className="text-center text-xs font-bold text-stone-400 bg-white py-2">{d}</div>
+          <div key={d} className="text-center text-xs font-bold text-stone-400 bg-paper py-2">{d}</div>
         ))}
       </div>
 
-      <div className="grid grid-cols-7 gap-px bg-stone-100 flex-1 min-h-0">
+      <div className="grid grid-cols-7 gap-0 flex-1 min-h-0 bg-paper overflow-y-auto pb-24 md:pb-0">
         {monthDays.map((day, i) => {
-          if (!day) return <div key={i} className="bg-white" />;
+          if (!day) return <div key={i} className="bg-paper" />;
           const dayIso = getISODate(day);
 
           const dayEntries = allDisplayEntries.filter(e => e.date === dayIso);
@@ -144,7 +144,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
             <div
               key={i}
               onClick={() => onSelectDate(day)}
-              className={`bg-white p-1 hover:bg-stone-50 cursor-pointer transition-colors relative flex flex-col items-start justify-start gap-1 overflow-hidden`}
+              className={`bg-paper p-1 hover:bg-stone-100 cursor-pointer transition-colors relative flex flex-col items-center justify-start gap-1 overflow-hidden h-28`}
             >
               <span className={`text-xs font-medium w-6 h-6 flex items-center justify-center rounded-full shrink-0 ${isToday ? 'bg-ink text-white shadow-sm' : 'text-stone-500'}`}>
                 {day.getDate()}

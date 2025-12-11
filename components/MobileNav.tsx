@@ -13,7 +13,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ onAdd }) => {
   const isActive = (path: string) => location.pathname === path || (path === '/' && location.pathname.startsWith('/collection/'));
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-stone-200 px-4 py-2 flex justify-between items-center z-40 pb-safe">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-paper/95 backdrop-blur-xl border-none px-4 py-2 flex justify-between items-center z-40 pb-safe">
       <button
         onClick={() => navigate('/')}
         className={`p-2 rounded-xl flex flex-col items-center gap-1 w-16 transition-colors ${isActive('/') ? 'text-ink' : 'text-stone-400'}`}

@@ -92,7 +92,7 @@ export const SyncProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const upload = useCallback(async () => {
         if (!config.url) {
-            setSyncError("WebDAV not configured");
+            showToast('WebDAV not configured');
             return;
         }
         setIsSyncing(true);
@@ -102,7 +102,7 @@ export const SyncProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const now = new Date().toISOString();
             setLastSyncTime(now);
             localStorage.setItem('zenbullet_last_sync', now);
-            showToast('Upload completed successfully');
+            showToast('Upload success: Cloud data overwritten with local version');
         } catch (err) {
             console.error("Upload error:", err);
             setSyncError(err instanceof Error ? err.message : 'Upload failed');
@@ -114,7 +114,7 @@ export const SyncProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const download = useCallback(async () => {
         if (!config.url) {
-            setSyncError("WebDAV not configured");
+            showToast('WebDAV not configured');
             return;
         }
         setIsSyncing(true);
@@ -130,7 +130,7 @@ export const SyncProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 const now = new Date().toISOString();
                 setLastSyncTime(now);
                 localStorage.setItem('zenbullet_last_sync', now);
-                showToast('Download & Merge completed');
+                showToast('Download success: Cloud changes merged into local');
             } else {
                 showToast('No data found on server');
             }
@@ -145,7 +145,8 @@ export const SyncProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const sync = useCallback(async () => {
         if (!config.url) {
-            setSyncError("WebDAV not configured");
+            // Don't show error toast for auto-sync when not configured
+            // Just silently return
             return;
         }
 
@@ -158,25 +159,62 @@ export const SyncProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
             let mergedEntries = entries;
             let mergedTags = tags;
+            let syncResult: 'cloud_updated' | 'local_updated' | 'no_change' = 'no_change';
 
             if (remoteData) {
+                // Compare local vs remote to determine which is newer
+                const localMaxTime = entries.reduce((max, e) => {
+                    const t = new Date(e.updatedAt || e.createdAt).getTime();
+                    return t > max ? t : max;
+                }, 0);
+
+                const remoteMaxTime = remoteData.entries.reduce((max, e) => {
+                    const t = new Date(e.updatedAt || e.createdAt).getTime();
+                    return t > max ? t : max;
+                }, 0);
+
                 // 2. Merge
                 mergedEntries = mergeEntries(entries, remoteData.entries);
                 mergedTags = mergeTags(tags, remoteData.tags);
 
-                // Update Local State
-                setEntries(mergedEntries);
-                setTags(mergedTags);
+                // Determine what changed
+                const entriesChanged = JSON.stringify(mergedEntries) !== JSON.stringify(entries);
+                const tagsChanged = JSON.stringify(mergedTags) !== JSON.stringify(tags);
+
+                if (entriesChanged || tagsChanged) {
+                    // Local state will be updated with merged data
+                    setEntries(mergedEntries);
+                    setTags(mergedTags);
+
+                    // If remote had newer data, we're "downloading"
+                    if (remoteMaxTime > localMaxTime) {
+                        syncResult = 'cloud_updated';
+                    } else {
+                        syncResult = 'local_updated';
+                    }
+                }
             }
 
-            // 3. Upload Merged
+            // 3. Upload Merged (always upload to ensure cloud is in sync)
             await webdavService.uploadData(mergedEntries, mergedTags);
+
+            // If we didn't download changes but we had local data, we uploaded
+            if (syncResult === 'no_change' && entries.length > 0) {
+                syncResult = 'local_updated';
+            }
 
             const now = new Date().toISOString();
             setLastSyncTime(now);
             localStorage.setItem('zenbullet_last_sync', now);
 
-            showToast('Sync completed successfully');
+            // Show specific message based on what happened
+            if (syncResult === 'cloud_updated') {
+                showToast('Sync: Cloud data downloaded to local');
+            } else if (syncResult === 'local_updated') {
+                showToast('Sync: Local data uploaded to cloud');
+            } else {
+                showToast('Sync: Already up to date');
+            }
 
         } catch (err) {
             console.error("Sync error:", err);

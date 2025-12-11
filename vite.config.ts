@@ -9,10 +9,10 @@ export default defineConfig(({ mode }) => {
       port: 5173,
       host: '0.0.0.0',
       proxy: {
-        '/webdav-proxy': {
+        '/api/webdav': {
           target: 'https://dav.jianguoyun.com/dav',
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/webdav-proxy/, ''),
+          rewrite: (path) => path.replace(/^\/api\/webdav/, ''),
           secure: false
         }
       }

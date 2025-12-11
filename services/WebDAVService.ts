@@ -30,9 +30,9 @@ export class WebDAVService {
     }
 
     private getProxyUrl(url: string): string {
-        // In development, use the local proxy to avoid CORS issues
-        if (import.meta.env.DEV && url.includes('jianguoyun.com')) {
-            return url.replace(/^https?:\/\/dav\.jianguoyun\.com\/dav/, '/webdav-proxy');
+        // Use the proxy path for all Jianguoyun requests to avoid CORS issues
+        if (url.includes('jianguoyun.com')) {
+            return url.replace(/^https?:\/\/dav\.jianguoyun\.com\/dav/, '/api/webdav');
         }
         return url;
     }

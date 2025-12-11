@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import {
-    ChevronLeft, ChevronRight, RotateCcw, Settings, Sparkles, Inbox, FolderKanban, BookOpen, Search
+    ChevronLeft, ChevronRight, RotateCcw, Settings, Sparkles, Inbox, FolderKanban, BookOpen, Search, Calendar
 } from 'lucide-react';
 import {
     DndContext,
@@ -191,10 +191,10 @@ export const TodayPage: React.FC<TodayPageProps> = ({
     if (isMobileListsView) {
         return (
             <div className="flex-1 flex flex-col h-full">
-                <header className="shrink-0 flex items-center justify-between px-6 py-5 bg-paper z-10">
+                <header className="shrink-0 flex items-center justify-between px-4 md:px-6 py-5 bg-paper z-10 pt-safe md:pt-5">
                     <h1 className="text-3xl font-bold text-ink font-hand tracking-wide">Collection</h1>
                 </header>
-                <div className="p-6 space-y-2 flex-1 overflow-y-auto">
+                <div className="p-4 md:p-6 space-y-2 flex-1 overflow-y-auto">
                     <button onClick={onOpenSearch} className="w-full flex items-center gap-3 p-3 mb-4 bg-stone-100 text-stone-500 rounded-xl">
                         <Search size={18} />
                         <span className="font-medium">Search...</span>
@@ -228,13 +228,24 @@ export const TodayPage: React.FC<TodayPageProps> = ({
     }
 
     // --- Render Main View ---
+    const isInbox = activeTagFilter === 'Inbox';
+
     return (
-        <div className="flex-1 flex flex-col h-full bg-paper">
+        <div className="flex-1 flex flex-col h-full bg-paper relative">
+            {/* Mobile Inbox FAB */}
+            <button
+                onClick={() => onNavigate('today', isInbox ? null : 'Inbox')}
+                className="fixed z-30 bottom-24 right-4 md:bottom-8 md:right-8 p-3 rounded-full shadow-lg hover:scale-105 transition-all bg-ink text-white md:hidden"
+                title={isInbox ? "Back to Today" : "Go to Inbox"}
+            >
+                {isInbox ? <Calendar size={24} /> : <Inbox size={24} />}
+            </button>
+
             {/* Header */}
-            <header className="shrink-0 flex items-center justify-between px-6 py-5 bg-paper z-10">
+            <header className="shrink-0 flex items-center justify-between px-4 md:px-6 py-5 bg-paper z-10 pt-safe md:pt-5">
                 <div className="flex items-center gap-4">
                     {/* Mobile Back Button if filter active */}
-                    {activeTagFilter && (
+                    {activeTagFilter && activeTagFilter !== 'Inbox' && (
                         <button onClick={onBack} className="md:hidden p-2 -ml-2 rounded-lg hover:bg-stone-200 text-stone-600">
                             <ChevronLeft size={24} />
                         </button>
@@ -284,8 +295,8 @@ export const TodayPage: React.FC<TodayPageProps> = ({
             </header>
 
             {/* Content */}
-            <div className="flex-1 overflow-y-auto no-scrollbar pb-24 md:pb-0">
-                <div className="px-6 pb-6 max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <div className="flex-1 overflow-y-auto no-scrollbar pb-40 md:pb-0">
+                <div className="px-4 md:px-6 pb-6 max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-2 duration-300">
                     <InlineCreator
                         onSubmit={addEntry}
                         activeDate={dateKey}

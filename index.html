@@ -1,64 +1,71 @@
-
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>zenbullet</title>
-    <link rel="icon" href="/icon.png" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <style>
-      @font-face {
-        font-family: 'Patrick Hand';
-        src: url('/PatrickHand-Regular.ttf') format('truetype');
-        font-weight: normal;
-        font-style: normal;
-        font-display: swap;
-      }
-    </style>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              paper: '#F9F7F2',
-              ink: '#2D2D2D',
-              accent: {
-                blue: '#E3F2FD',
-                coral: '#FFEBEE',
-                green: '#E8F5E9',
-                yellow: '#FFFDE7',
-              }
-            },
-            fontFamily: {
-              sans: ['Inter', 'sans-serif'],
-              hand: ['Patrick Hand', 'cursive'],
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>zenbullet</title>
+  <link rel="icon" href="/icon.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: 'Patrick Hand';
+      src: url('/PatrickHand-Regular.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+  </style>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            paper: '#F9F7F2',
+            ink: '#2D2D2D',
+            accent: {
+              blue: '#E3F2FD',
+              coral: '#FFEBEE',
+              green: '#E8F5E9',
+              yellow: '#FFFDE7',
             }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            hand: ['Patrick Hand', 'cursive'],
           }
         }
       }
-    </script>
-    <style>
-      /* Custom scrollbar for a cleaner look */
-      ::-webkit-scrollbar {
-        width: 6px;
-        height: 6px;
-      }
-      ::-webkit-scrollbar-track {
-        background: transparent;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #D1D5DB;
-        border-radius: 3px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #9CA3AF;
-      }
-      body {
-        background-color: #F9F7F2;
-      }
-    </style>
+    }
+  </script>
+  <style>
+    ::-webkit-scrollbar {
+      width: 0px;
+      background: transparent;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    body {
+      background-color: #F9F7F2;
+    }
+
+    .pb-safe {
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .pt-safe {
+      padding-top: env(safe-area-inset-top);
+    }
+  </style>
   <script type="importmap">
 {
   "imports": {
@@ -75,10 +82,12 @@
   }
 }
 </script>
-<link rel="stylesheet" href="/index.css">
+  <link rel="stylesheet" href="/index.css">
 </head>
-  <body class="bg-paper text-ink overflow-hidden">
-    <div id="root"></div>
+
+<body class="bg-paper text-ink overflow-hidden">
+  <div id="root"></div>
   <script type="module" src="/index.tsx"></script>
 </body>
+
 </html>

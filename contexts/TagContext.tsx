@@ -51,7 +51,7 @@ export const TagProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         if (oldName === newName) return;
         setTags(prev => {
             if (prev.some(t => t.name === newName)) {
-                alert('Collection name already exists'); // Alert could be replaced by Toast if we want standard UI
+                showToast('Collection name already exists');
                 return prev;
             }
             return prev.map(t => t.name === oldName ? { ...t, name: newName } : t);

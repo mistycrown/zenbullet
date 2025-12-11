@@ -29,7 +29,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   return (
     <aside
       className={`hidden md:flex flex-col h-full bg-white border-r border-stone-200 z-20 shrink-0 transition-all duration-300 ${isCollapsed ? 'w-20 px-2' : 'w-64 px-6'
-        } py-6`}
+        } py-6 pt-safe`}
     >
       <div className={`flex items-center mb-10 ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
         <img src="/icon.png" alt="ZenBullet" className="w-8 h-8 rounded-lg shrink-0" />

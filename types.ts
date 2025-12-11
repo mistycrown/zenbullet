@@ -7,6 +7,7 @@ export interface Entry {
   id: string;
   createdAt: string; // ISO Timestamp
   date: string | null; // YYYY-MM-DD or null for unscheduled
+  updatedAt?: string; // ISO Timestamp for sync
   type: EntryType;
   content: string; // Combined Title and Details
   status: EntryStatus;

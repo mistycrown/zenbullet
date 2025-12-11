@@ -14,10 +14,10 @@ export const CollectionMenuPage: React.FC = () => {
 
     return (
         <div className="flex-1 flex flex-col h-full bg-paper">
-            <header className="shrink-0 flex items-center justify-between px-6 py-5 bg-paper z-10">
+            <header className="shrink-0 flex items-center justify-between px-4 md:px-6 py-5 bg-paper z-10 pt-safe md:pt-5">
                 <h1 className="text-3xl font-bold text-ink font-hand tracking-wide">Collection</h1>
             </header>
-            <div className="p-6 space-y-2 flex-1 overflow-y-auto">
+            <div className="p-4 md:p-6 space-y-2 flex-1 overflow-y-auto no-scrollbar pb-24 md:pb-6">
                 <button onClick={() => navigate('/search')} className="w-full flex items-center gap-3 p-3 mb-4 bg-stone-100 text-stone-500 rounded-xl">
                     <Search size={18} />
                     <span className="font-medium">Search...</span>

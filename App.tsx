@@ -1,6 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useZenContext } from './contexts/ZenContext';
+import { ChevronLeft } from 'lucide-react';
 import { getISODate, addDays, getStartOfWeek } from './utils';
 
 // Components
@@ -11,6 +12,7 @@ import ProjectView from './components/ProjectView';
 import SearchView from './components/SearchView';
 import EntryCreatorModal from './components/EntryCreatorModal';
 import AIEntryCreatorModal from './components/AIEntryCreatorModal';
+import EntryDetails from './components/EntryDetails';
 
 // Pages
 import { TodayPage } from './pages/TodayPage';
@@ -41,7 +43,7 @@ const TodayRoute = ({
       // These handlers now just navigate
       onOpenSettings={() => navigate('/settings')}
       onOpenSearch={() => navigate('/search')}
-      onBack={() => navigate('/')}
+      onBack={() => navigate('/collection')}
       onNavigate={(tab, t) => {
         if (tab === 'today') navigate(t ? `/collection/${t}` : '/');
         else if (tab === 'projects') navigate('/projects');
@@ -60,11 +62,12 @@ const SettingsRoute = () => {
   // /settings, /settings/ai, /settings/tags, etc.
   const location = useLocation();
 
-  let view: 'root' | 'ai' | 'tags' | 'prefs' | 'data' = 'root';
+  let view: 'root' | 'ai' | 'tags' | 'prefs' | 'data' | 'sync' = 'root';
   if (location.pathname.includes('/ai')) view = 'ai';
   else if (location.pathname.includes('/tags')) view = 'tags';
   else if (location.pathname.includes('/prefs')) view = 'prefs';
   else if (location.pathname.includes('/data')) view = 'data';
+  else if (location.pathname.includes('/sync')) view = 'sync';
 
   const handleViewChange = (v: string) => {
     if (v === 'root') navigate('/settings');
@@ -88,8 +91,18 @@ export default function App() {
     addEntry,
     updateEntry,
     deleteEntry,
-    batchAddEntries
+    batchAddEntries,
+    sync,
+    syncConfig
   } = useZenContext();
+
+  // Auto-sync on mount
+  useEffect(() => {
+    if (syncConfig?.url) {
+      sync();
+    }
+  }, [syncConfig?.url]); // Sync when config is available/loaded
+
 
   const navigate = useNavigate();
 
@@ -148,6 +161,19 @@ export default function App() {
     onCreate: addEntry
   };
 
+  const mobileEntryDetail = selectedEntry ? (
+    <EntryDetails
+      entry={selectedEntry}
+      entries={entries}
+      tags={tags}
+      onClose={() => setSelectedEntryId(null)}
+      onUpdate={updateEntry}
+      onDelete={deleteEntry}
+      onCreate={addEntry}
+      onToggleSidebar={() => setSelectedEntryId(null)}
+    />
+  ) : null;
+
   const globalModals = (
     <>
       <EntryCreatorModal
@@ -172,6 +198,7 @@ export default function App() {
       onOpenAIModal={() => setIsAIModalOpen(true)}
       onAddEntry={() => setIsModalOpen(true)}
       rightSidebarProps={rightSidebarProps}
+      mobileEntryDetail={mobileEntryDetail}
       modals={globalModals}
     >
       <Routes>
@@ -197,7 +224,7 @@ export default function App() {
 
         <Route path="/calendar" element={
           <div className="flex-1 flex flex-col h-full bg-paper">
-            <header className="shrink-0 flex items-center justify-between px-6 py-5 bg-paper z-10 hidden md:flex">
+            <header className="shrink-0 flex items-center justify-between px-6 py-5 bg-paper z-10 hidden md:flex pt-safe">
               <h1 className="text-3xl font-bold text-ink font-hand tracking-wide">Calendar</h1>
             </header>
             <div className="flex-1 overflow-hidden">
@@ -219,7 +246,7 @@ export default function App() {
 
         <Route path="/week" element={
           <div className="flex-1 flex flex-col h-full bg-paper">
-            <header className="shrink-0 flex items-center justify-between px-6 py-5 bg-paper z-10 hidden md:flex">
+            <header className="shrink-0 flex items-center justify-between px-6 py-5 bg-paper z-10 hidden md:flex pt-safe">
               <h1 className="text-3xl font-bold text-ink font-hand tracking-wide">Weekly</h1>
             </header>
             <div className="flex-1 overflow-y-auto no-scrollbar pb-24 md:pb-0">
@@ -247,8 +274,10 @@ export default function App() {
 
         <Route path="/projects" element={
           <div className="flex-1 flex flex-col h-full bg-paper">
-            <header className="shrink-0 flex items-center justify-between px-6 py-5 bg-paper z-10">
-              <button onClick={() => navigate('/collection')} className="md:hidden p-2 -ml-2 rounded-lg text-stone-600">Back</button>
+            <header className="shrink-0 flex items-center justify-start gap-4 px-4 md:px-6 py-5 bg-paper z-10 pt-safe font-sans">
+              <button onClick={() => navigate('/collection')} className="md:hidden p-2 -ml-2 rounded-lg text-stone-600 hover:bg-stone-200">
+                <ChevronLeft size={24} />
+              </button>
               <h1 className="text-3xl font-bold text-ink font-hand tracking-wide">Projects</h1>
             </header>
             <div className="flex-1 overflow-y-auto pb-24 md:pb-0">
@@ -269,7 +298,10 @@ export default function App() {
 
         <Route path="/search" element={
           <div className="flex-1 flex flex-col h-full bg-paper">
-            <header className="shrink-0 flex items-center justify-between px-6 py-5 bg-paper z-10">
+            <header className="shrink-0 flex items-center justify-start gap-4 px-4 md:px-6 py-5 bg-paper z-10 pt-safe font-sans">
+              <button onClick={() => navigate('/collection')} className="md:hidden p-2 -ml-2 rounded-lg text-stone-600 hover:bg-stone-200">
+                <ChevronLeft size={24} />
+              </button>
               <h1 className="text-3xl font-bold text-ink font-hand tracking-wide">Search</h1>
             </header>
             <div className="flex-1 overflow-y-auto pb-24 md:pb-0">

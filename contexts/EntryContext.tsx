@@ -1,20 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { Entry } from '../types';
-import { getNextDate } from '../utils';
+import { getNextDate, INITIAL_ENTRIES } from '../utils';
 import { useToast } from './ToastContext';
-
-// --- Mock Data ---
-const INITIAL_ENTRIES: Entry[] = [
-    { id: '1', createdAt: new Date().toISOString(), date: new Date().toISOString().split('T')[0], type: 'event', content: '10:00 AM Team Sync\n\nDiscuss Q2 Roadmap', status: 'todo', tag: 'Work', recurrence: 'weekly', priority: 3 },
-    { id: '2', createdAt: new Date().toISOString(), date: new Date().toISOString().split('T')[0], type: 'task', content: 'Finalize Q1 Financial Report', status: 'done', tag: 'Work', priority: 4 },
-    { id: '3', createdAt: new Date().toISOString(), date: new Date().toISOString().split('T')[0], type: 'task', content: 'Printer is out of ink', status: 'todo', tag: 'Office', priority: 1 },
-    { id: '4', createdAt: new Date().toISOString(), date: new Date().toISOString().split('T')[0], type: 'task', content: 'Leg day at gym', status: 'todo', tag: 'Health', recurrence: 'daily', priority: 2 },
-    { id: '5', createdAt: new Date().toISOString(), date: new Date(Date.now() + 86400000).toISOString().split('T')[0], type: 'task', content: 'Send contract draft to client', status: 'todo', tag: 'Work', priority: 3 },
-    { id: '6', createdAt: new Date().toISOString(), date: new Date(Date.now() + 86400000).toISOString().split('T')[0], type: 'event', content: 'Lunch with Sarah', status: 'todo', tag: 'Life', priority: 2 },
-    { id: '7', createdAt: new Date().toISOString(), date: new Date(Date.now() - 86400000).toISOString().split('T')[0], type: 'task', content: 'Buy groceries', status: 'done', tag: 'Life', priority: 2 },
-    { id: '8', createdAt: new Date().toISOString(), date: new Date(Date.now() - 172800000).toISOString().split('T')[0], type: 'task', content: 'Old overdue task', status: 'todo', tag: 'Work', priority: 4 },
-    { id: '10', createdAt: new Date().toISOString(), date: null, type: 'task', content: 'Read that new book', status: 'todo', tag: 'Inbox', priority: 1 },
-];
 
 interface EntryContextType {
     entries: Entry[];
@@ -59,8 +46,9 @@ export const EntryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const addEntry = useCallback((newEntry: Omit<Entry, 'id' | 'createdAt'>) => {
         const id = Math.random().toString(36).substr(2, 9);
         const createdAt = new Date().toISOString();
+        const updatedAt = createdAt;
         const priority = newEntry.priority || 2;
-        setEntries(prev => [...prev, { ...newEntry, id, createdAt, priority }]);
+        setEntries(prev => [...prev, { ...newEntry, id, createdAt, updatedAt, priority }]);
 
         if (newEntry.content) {
             showToast('Entry created');
@@ -72,6 +60,7 @@ export const EntryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             ...entry,
             id: Math.random().toString(36).substr(2, 9) + Math.random().toString(36).substr(2, 4),
             createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
             priority: entry.priority || 2,
             status: 'todo' as const
         }));
@@ -89,7 +78,7 @@ export const EntryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             const newStatus = updates.status;
             const isCompleting = newStatus === 'done' && entry.status === 'todo';
             const isRecurring = entry.recurrence;
-            let finalUpdates = { ...updates };
+            let finalUpdates = { ...updates, updatedAt: new Date().toISOString() };
 
             if (isRecurring && isCompleting && entry.date) {
                 const nextDate = getNextDate(entry.date, entry.recurrence!);

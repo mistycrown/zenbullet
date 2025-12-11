@@ -47,26 +47,28 @@ const ProjectView: React.FC<ProjectViewProps> = ({
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto pb-24">
-      <form onSubmit={handleAddProject} className="mb-8 flex gap-3">
-        <input 
-          type="text" 
+    <div className="p-4 md:p-6 max-w-4xl mx-auto pb-24">
+      <form onSubmit={handleAddProject} className="mb-8 flex flex-col md:flex-row gap-3">
+        <input
+          type="text"
           value={newProjectName}
           onChange={(e) => setNewProjectName(e.target.value)}
           placeholder="New Project Name..."
-          className="flex-1 p-3 bg-white border border-stone-200 rounded-xl outline-none focus:border-stone-300 transition-colors"
+          className="flex-1 p-3 bg-white border border-stone-200 rounded-xl outline-none focus:border-stone-300 transition-colors w-full"
         />
-        <div className="w-40">
-           <CustomSelect 
-             value={newProjectTag}
-             onChange={setNewProjectTag}
-             options={tags.map(t => ({ value: t.name, label: t.name }))}
-             icon={TagIcon}
-           />
+        <div className="flex gap-3">
+          <div className="w-40 flex-1 md:flex-none">
+            <CustomSelect
+              value={newProjectTag}
+              onChange={setNewProjectTag}
+              options={tags.map(t => ({ value: t.name, label: t.name }))}
+              icon={TagIcon}
+            />
+          </div>
+          <button type="submit" className="bg-ink text-white px-6 py-3 md:py-0 rounded-xl font-medium hover:bg-stone-700 transition-colors whitespace-nowrap flex-1 md:flex-none">
+            Add Project
+          </button>
         </div>
-        <button type="submit" className="bg-ink text-white px-6 rounded-xl font-medium hover:bg-stone-700 transition-colors">
-          Add Project
-        </button>
       </form>
 
       <div className="space-y-4">
@@ -80,19 +82,19 @@ const ProjectView: React.FC<ProjectViewProps> = ({
           const subtasks = entries.filter(e => e.parentId === project.id);
           return (
             <ProjectCard
-               key={project.id}
-               project={project}
-               subtasks={subtasks}
-               tags={tags}
-               onAddSubtask={handleAddSubtask}
-               onUpdateEntry={updateEntry}
-               onToggleEntry={(id) => {
-                  const e = entries.find(x => x.id === id);
-                  if(e) updateEntry(id, { status: e.status === 'todo' ? 'done' : 'todo' });
-               }}
-               onSelectEntry={() => {}} // Selection logic usually handled by parent for right sidebar, but ProjectView is full page
-               currentDate={currentDate}
-               isSortable={false}
+              key={project.id}
+              project={project}
+              subtasks={subtasks}
+              tags={tags}
+              onAddSubtask={handleAddSubtask}
+              onUpdateEntry={updateEntry}
+              onToggleEntry={(id) => {
+                const e = entries.find(x => x.id === id);
+                if (e) updateEntry(id, { status: e.status === 'todo' ? 'done' : 'todo' });
+              }}
+              onSelectEntry={() => { }} // Selection logic usually handled by parent for right sidebar, but ProjectView is full page
+              currentDate={currentDate}
+              isSortable={false}
             />
           );
         })}

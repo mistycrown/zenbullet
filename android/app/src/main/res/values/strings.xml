@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">ZenBullet</string>
+    <string name="title_activity_main">ZenBullet</string>
+    <string name="package_name">com.mistycrown.zenbullet</string>
+    <string name="custom_url_scheme">com.mistycrown.zenbullet</string>
+</resources>

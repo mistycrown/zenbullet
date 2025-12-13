@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
-import { X, Square, Circle, Minus, AlertCircle } from 'lucide-react';
+import { X, Square, Circle, Minus, AlertCircle, Calendar, Inbox } from 'lucide-react';
 import { Entry, EntryType, Tag } from '../types';
 import CalendarSelect from './CalendarSelect';
-import { getPriorityLabel, getPriorityColor, extractDateFromText } from '../utils';
+import { getPriorityLabel, getPriorityColor, extractDateFromText, getISODate } from '../utils';
 
 interface EntryCreatorModalProps {
   isOpen: boolean;
@@ -26,10 +26,12 @@ const EntryCreatorModal: React.FC<EntryCreatorModalProps> = ({
   const [date, setDate] = useState('');
   const [priority, setPriority] = useState(2); // Default to Normal (2)
 
+  const todayStr = getISODate(new Date());
+
   useEffect(() => {
     if (isOpen) {
       setContent('');
-      setDate('');
+      setDate(todayStr);
       setPriority(2);
     }
   }, [isOpen]);
@@ -48,6 +50,14 @@ const EntryCreatorModal: React.FC<EntryCreatorModalProps> = ({
       priority
     });
     onClose();
+  };
+
+  const handleSetToday = () => {
+    setDate(todayStr);
+  };
+
+  const handleSetInbox = () => {
+    setDate('');
   };
 
   return (
@@ -76,6 +86,29 @@ const EntryCreatorModal: React.FC<EntryCreatorModalProps> = ({
                 <span className="capitalize">{t}</span>
               </button>
             ))}
+            <div className="w-px bg-stone-100 mx-1"></div>
+            <button
+              type="button"
+              onClick={handleSetToday}
+              className={`w-10 flex items-center justify-center rounded-lg transition-colors shrink-0 ${date === todayStr
+                ? 'bg-ink text-white'
+                : 'bg-stone-50 hover:bg-stone-100 text-stone-500 hover:text-ink'
+                }`}
+              title="Today"
+            >
+              <Calendar size={18} />
+            </button>
+            <button
+              type="button"
+              onClick={handleSetInbox}
+              className={`w-10 flex items-center justify-center rounded-lg transition-colors shrink-0 ${!date
+                ? 'bg-ink text-white'
+                : 'bg-stone-50 hover:bg-stone-100 text-stone-500 hover:text-ink'
+                }`}
+              title="No Date (Inbox)"
+            >
+              <Inbox size={18} />
+            </button>
           </div>
 
           <div className="flex flex-wrap gap-2">
@@ -87,7 +120,7 @@ const EntryCreatorModal: React.FC<EntryCreatorModalProps> = ({
               />
             </div>
 
-            <div className="flex bg-stone-50 rounded-lg p-1 border border-stone-200">
+            <div className="flex bg-stone-50 rounded-lg p-1 border border-stone-200 shrink-0">
               {[1, 2, 3, 4].map((p) => (
                 <button
                   key={p}

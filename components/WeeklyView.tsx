@@ -1,8 +1,9 @@
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Plus, CheckSquare, Square, XSquare, Circle, CheckCircle, XCircle, Minus, Repeat, PanelRightClose, RotateCcw, Pencil, Check, ArrowUp, ArrowDown, Trash2 } from 'lucide-react';
 import { Entry, Tag } from '../types';
 import { getStartOfWeek, getWeekDays, getWeekNumber, getISODate, getTagStyles, generateGhostEntries, getPriorityLabel, getPriorityColor, addDays } from '../utils';
+import { useZenContext } from '../contexts/ZenContext';
 
 interface WeeklyViewProps {
   currentDate: Date;
@@ -79,26 +80,26 @@ import { CSS } from '@dnd-kit/utilities';
 // Helper for Droppable Day Column
 const DroppableDay = ({ dateIso, children, className }: { dateIso: string, children: React.ReactNode, className?: string }) => {
   const { setNodeRef, isOver } = useDroppable({
-    id: `day-${dateIso}`,
+    id: `week-day-${dateIso}`,
   });
 
   return (
-    <div ref={setNodeRef} className={`${className} ${isOver ? 'bg-blue-50 ring-2 ring-blue-200 ring-inset rounded-lg transition-colors' : ''}`}>
+    <div ref={setNodeRef} className={`${className} ${isOver ? 'bg-stone-50 rounded-lg transition-colors' : ''}`}>
       {children}
     </div>
   );
 };
 
 // Helper for Draggable Weekly Entry
-const DraggableWeeklyEntry = ({ entry, children }: { entry: Entry, children: React.ReactNode }) => {
+const DraggableWeeklyEntry = ({ entry, children, disabled }: { entry: Entry, children: React.ReactNode, disabled?: boolean }) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
-    id: entry.id,
-    disabled: (entry as any).isGhost // Disable dragging for ghost entries
+    id: `week-entry-${entry.id}`,
+    disabled: disabled || (entry as any).isGhost // Disable dragging for ghost entries or if explicitly disabled (mobile)
   });
 
   const style = {
     transform: CSS.Translate.toString(transform),
-    opacity: isDragging ? 0.5 : 1,
+    opacity: isDragging ? 0 : 1,
   };
 
   return (
@@ -126,10 +127,18 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({
   isCompact = false
 }) => {
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' ? window.innerWidth < 768 : false);
+  const { preferences } = useZenContext();
 
-  const weekStart = getStartOfWeek(currentDate);
-  const weekDays = getWeekDays(currentDate);
-  const weekNumber = getWeekNumber(currentDate);
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const weekStart = getStartOfWeek(currentDate, preferences.startWeekOnMonday);
+  const weekDays = getWeekDays(currentDate, preferences.startWeekOnMonday);
+  const weekNumber = getWeekNumber(weekStart);
   const year = currentDate.getFullYear();
   const weekStartIso = getISODate(weekDays[0]);
   const weekEndIso = getISODate(weekDays[6]);
@@ -346,7 +355,7 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({
                       const priority = e.priority || 2;
 
                       return (
-                        <DraggableWeeklyEntry key={e.id} entry={e}>
+                        <DraggableWeeklyEntry key={e.id} entry={e} disabled={isMobile}>
                           <div
                             onClick={() => !isEditMode && onSelect(e.id)}
                             className={`flex items-start gap-3 ${isEditMode ? '' : 'cursor-pointer group/item'} ${isGhost ? 'opacity-70' : ''}`}

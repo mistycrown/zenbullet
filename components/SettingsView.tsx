@@ -152,7 +152,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({
   currentView,
   onViewChange
 }) => {
-  const { entries, tags, addTag, removeTag, renameTag, reorderTags, importData, isSyncing, lastSyncTime, syncError, syncConfig, sync, upload, download, updateSyncConfig, clearData, restoreDefaults, showToast } = useZenContext();
+  const { entries, tags, addTag, removeTag, renameTag, reorderTags, importData, isSyncing, lastSyncTime, syncError, syncConfig, sync, upload, download, updateSyncConfig, clearData, restoreDefaults, showToast, preferences, updatePreference } = useZenContext();
 
   // -- AI Config State --
   const [provider, setProvider] = useState('openai');
@@ -619,6 +619,15 @@ const SettingsView: React.FC<SettingsViewProps> = ({
         <div className="flex items-center justify-between py-2 border-b border-stone-100 mb-2">
           <span className="text-sm font-medium">Dark Mode</span>
           <div className="w-10 h-6 bg-stone-200 rounded-full relative cursor-pointer"><div className="w-4 h-4 bg-white rounded-full absolute left-1 top-1 shadow-sm"></div></div>
+        </div>
+        <div className="flex items-center justify-between py-2 border-b border-stone-100 mb-2">
+          <span className="text-sm font-medium">Start Week on Monday</span>
+          <div
+            onClick={() => updatePreference('startWeekOnMonday', !preferences.startWeekOnMonday)}
+            className={`w-10 h-6 rounded-full relative cursor-pointer transition-colors ${preferences.startWeekOnMonday ? 'bg-ink' : 'bg-stone-200'}`}
+          >
+            <div className={`w-4 h-4 bg-white rounded-full absolute top-1 shadow-sm transition-all ${preferences.startWeekOnMonday ? 'left-5' : 'left-1'}`}></div>
+          </div>
         </div>
         <div className="flex items-center justify-between py-2 border-b border-stone-100">
           <span className="text-sm font-medium">Notifications</span>

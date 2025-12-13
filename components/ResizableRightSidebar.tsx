@@ -20,6 +20,7 @@ interface ResizableRightSidebarProps {
   onAddGoal: () => void;
   onNavigateToReviews: (entryId: string) => void;
   onCreate?: (entry: Omit<Entry, 'id' | 'createdAt'>) => void; // Added for creating subtasks via batch edit
+  onDateClick?: (date: Date) => void;
 }
 
 const ResizableRightSidebar: React.FC<ResizableRightSidebarProps> = ({
@@ -35,7 +36,8 @@ const ResizableRightSidebar: React.FC<ResizableRightSidebarProps> = ({
   onSelect,
   onAddGoal,
   onNavigateToReviews,
-  onCreate
+  onCreate,
+  onDateClick
 }) => {
   const [width, setWidth] = useState(400);
   const [isResizing, setIsResizing] = useState(false);
@@ -122,7 +124,7 @@ const ResizableRightSidebar: React.FC<ResizableRightSidebarProps> = ({
               entries={entries}
               tags={tags}
               currentDate={currentDate}
-              onDateClick={onDateChange}
+              onDateClick={onDateClick || onDateChange}
               onToggle={onToggle}
               onSelect={onSelect}
               onAddGoal={onAddGoal}

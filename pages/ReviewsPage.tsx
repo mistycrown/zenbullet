@@ -61,7 +61,7 @@ export const ReviewsPage: React.FC<ReviewsPageProps> = ({
                 </div>
             </header>
 
-            <div className="flex-1 overflow-y-auto pb-24 md:pb-0 px-6">
+            <div className="flex-1 overflow-y-auto pb-24 md:pb-0 px-6 pt-6">
                 <div className="max-w-4xl mx-auto min-h-full">
                     {!expandedId ? (
                         // List View
@@ -97,35 +97,35 @@ export const ReviewsPage: React.FC<ReviewsPageProps> = ({
 
                             {expandedReview && (
                                 <div className="flex-1 bg-white rounded-2xl shadow-sm border border-stone-100 flex flex-col overflow-hidden">
-                                    <div className="p-4 border-b border-stone-100 bg-stone-50">
+                                    <div className="px-6 pt-6 pb-2 bg-white">
                                         <input
                                             type="text"
                                             value={expandedReview.customTitle || ''}
                                             onChange={(e) => onUpdate(expandedReview.id, { customTitle: e.target.value })}
                                             placeholder={`Focus for Week of ${expandedReview.date}`}
-                                            className="text-lg font-bold font-hand text-ink bg-transparent border-none outline-none placeholder:text-stone-300 w-full"
+                                            className="text-2xl font-bold font-hand text-ink bg-transparent border-none outline-none placeholder:text-stone-200 w-full"
                                         />
-                                        {!expandedReview.customTitle && <p className="text-xs text-stone-400 mt-1">Tap title to rename</p>}
+                                        {!expandedReview.customTitle && <p className="text-xs text-stone-300 mt-1">Tap title to rename</p>}
                                     </div>
-                                    <div className="flex-1 overflow-y-auto p-6 grid md:grid-cols-2 gap-6">
+                                    <div className="flex-1 overflow-y-auto px-6 pb-6 pt-2 grid md:grid-cols-2 gap-8">
                                         {/* Plan Section */}
-                                        <div className="space-y-2 flex flex-col">
-                                            <label className="text-xs font-bold text-stone-400 uppercase tracking-wider">Plan / Focus</label>
+                                        <div className="space-y-3 flex flex-col">
+                                            <label className="text-xs font-bold text-stone-400 uppercase tracking-wider border-b border-stone-100 pb-2 block">Plan / Focus</label>
                                             <textarea
                                                 value={reviewPlan}
                                                 onChange={(e) => handleUpdateReviewContent('plan', e.target.value)}
                                                 placeholder="What are your main goals this week?"
-                                                className="w-full flex-1 p-4 bg-stone-50 border border-stone-200 rounded-xl text-sm outline-none focus:border-stone-300 resize-none font-sans"
+                                                className="w-full flex-1 p-0 bg-transparent border-none text-base leading-relaxed outline-none resize-none font-sans placeholder:text-stone-300"
                                             />
                                         </div>
                                         {/* Review Section */}
-                                        <div className="space-y-2 flex flex-col">
-                                            <label className="text-xs font-bold text-stone-400 uppercase tracking-wider">Review / Summary</label>
+                                        <div className="space-y-3 flex flex-col">
+                                            <label className="text-xs font-bold text-stone-400 uppercase tracking-wider border-b border-stone-100 pb-2 block">Review / Summary</label>
                                             <textarea
                                                 value={reviewSummary}
                                                 onChange={(e) => handleUpdateReviewContent('summary', e.target.value)}
                                                 placeholder="How did it go? Wins? Improvements?"
-                                                className="w-full flex-1 p-4 bg-stone-50 border border-stone-200 rounded-xl text-sm outline-none focus:border-stone-300 resize-none font-sans"
+                                                className="w-full flex-1 p-0 bg-transparent border-none text-base leading-relaxed outline-none resize-none font-sans placeholder:text-stone-300"
                                             />
                                         </div>
                                     </div>

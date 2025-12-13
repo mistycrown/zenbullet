@@ -49,15 +49,43 @@ export const Layout: React.FC<LayoutProps> = ({
 
         if (!over) return;
 
-        // If dropped on a day in WeeklyView (sidebar)
-        if (over.id && String(over.id).startsWith('day-')) {
-            const targetDate = String(over.id).replace('day-', '');
+        const overId = String(over.id);
+        const activeIdStr = String(active.id);
+
+        let targetDate = '';
+
+        // Handle various drop zones
+        if (overId.startsWith('day-')) {
+            targetDate = overId.replace('day-', '');
+        } else if (overId.startsWith('cal-day-')) {
+            targetDate = overId.replace('cal-day-', '');
+        } else if (overId.startsWith('week-day-')) {
+            targetDate = overId.replace('week-day-', '');
+        }
+
+        if (targetDate) {
+            // Parse real entry ID by stripping prefixes
+            let entryId = activeIdStr;
+            if (activeIdStr.startsWith('cal-entry-')) {
+                entryId = activeIdStr.replace('cal-entry-', '');
+            } else if (activeIdStr.startsWith('week-entry-')) {
+                entryId = activeIdStr.replace('week-entry-', '');
+            }
+
             // Update the entry date
-            updateEntry(String(active.id), { date: targetDate });
+            updateEntry(entryId, { date: targetDate });
         }
     };
 
-    const activeEntry = activeId ? entries.find(e => e.id === activeId) : null;
+    const getRealDetails = (id: string | null) => {
+        if (!id) return null;
+        let realId = id;
+        if (id.startsWith('cal-entry-')) realId = id.replace('cal-entry-', '');
+        if (id.startsWith('week-entry-')) realId = id.replace('week-entry-', '');
+        return entries.find(e => e.id === realId);
+    };
+
+    const activeEntry = getRealDetails(activeId);
 
     return (
         <DndContext
@@ -94,9 +122,9 @@ export const Layout: React.FC<LayoutProps> = ({
 
                 <DragOverlay>
                     {activeEntry ? (
-                        <div className="bg-white p-3 rounded-xl shadow-xl border border-stone-200 flex items-center gap-3 w-[300px] opacity-90 cursor-grabbing">
-                            <div className="w-4 h-4 border-2 border-stone-400 rounded-sm"></div>
-                            <span className="font-medium text-ink truncate">{activeEntry.content}</span>
+                        <div className="bg-white px-3 py-2 rounded-lg shadow-xl border border-stone-200 flex items-center gap-2 max-w-[200px] opacity-90 cursor-grabbing">
+                            <div className="w-3 h-3 border-2 border-stone-400 rounded-sm shrink-0"></div>
+                            <span className="font-medium text-xs text-ink truncate">{activeEntry.content}</span>
                         </div>
                     ) : null}
                 </DragOverlay>

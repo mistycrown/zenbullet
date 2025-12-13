@@ -56,7 +56,7 @@ const ProjectView: React.FC<ProjectViewProps> = ({
           placeholder="New Project Name..."
           className="flex-1 p-3 bg-white border border-stone-200 rounded-xl outline-none focus:border-stone-300 transition-colors w-full"
         />
-        <div className="flex gap-3">
+        <div className="flex gap-3 items-stretch">
           <div className="w-40 flex-1 md:flex-none">
             <CustomSelect
               value={newProjectTag}
@@ -65,7 +65,7 @@ const ProjectView: React.FC<ProjectViewProps> = ({
               icon={TagIcon}
             />
           </div>
-          <button type="submit" className="bg-ink text-white px-6 py-3 md:py-0 rounded-xl font-medium hover:bg-stone-700 transition-colors whitespace-nowrap flex-1 md:flex-none">
+          <button type="submit" className="bg-ink text-white px-6 py-2 rounded-xl text-sm font-medium hover:bg-stone-700 transition-colors whitespace-nowrap flex-1 md:flex-none flex items-center justify-center">
             Add Project
           </button>
         </div>

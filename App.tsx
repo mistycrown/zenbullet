@@ -122,11 +122,26 @@ export default function App() {
   const location = useLocation();
   useEffect(() => {
     const handleBackButton = CapacitorApp.addListener('backButton', ({ canGoBack }) => {
-      // 如果在根路径，退出应用
+      // Priority 1: Close Entry Details
+      if (selectedEntryId) {
+        setSelectedEntryId(null);
+        return;
+      }
+
+      // Priority 2: Close Modals
+      if (isModalOpen) {
+        setIsModalOpen(false);
+        return;
+      }
+      if (isAIModalOpen) {
+        setIsAIModalOpen(false);
+        return;
+      }
+
+      // Priority 3: Navigation History or Exit
       if (location.pathname === '/' || !canGoBack) {
         CapacitorApp.exitApp();
       } else {
-        // 否则返回上一页
         window.history.back();
       }
     });
@@ -134,7 +149,7 @@ export default function App() {
     return () => {
       handleBackButton.then(listener => listener.remove());
     };
-  }, [location.pathname]);
+  }, [location.pathname, selectedEntryId, isModalOpen, isAIModalOpen]);
 
 
   const handleCreateWeeklyReview = () => {
@@ -169,7 +184,11 @@ export default function App() {
     onSelect: setSelectedEntryId,
     onAddGoal: handleCreateWeeklyReview,
     onNavigateToReviews: handleNavigateToReviews,
-    onCreate: addEntry
+    onCreate: addEntry,
+    onDateClick: (d: Date) => {
+      setCurrentDate(d);
+      navigate('/');
+    }
   };
 
   const mobileEntryDetail = selectedEntry ? (
@@ -285,11 +304,11 @@ export default function App() {
 
         <Route path="/projects" element={
           <div className="flex-1 flex flex-col h-full bg-paper">
-            <header className="shrink-0 flex items-center justify-start gap-4 px-4 md:px-6 py-5 bg-paper z-10 pt-safe font-sans">
-              <button onClick={() => navigate('/collection')} className="md:hidden p-2 -ml-2 rounded-lg text-stone-600 hover:bg-stone-200">
+            <header className="shrink-0 flex items-center gap-3 px-4 md:px-6 bg-paper z-10 pt-safe md:py-5 font-sans">
+              <button onClick={() => navigate('/collection')} className="md:hidden p-2 -ml-2 text-stone-500 hover:text-ink hover:bg-stone-100 rounded-full transition-colors">
                 <ChevronLeft size={24} />
               </button>
-              <h1 className="text-3xl font-bold text-ink font-hand tracking-wide">Projects</h1>
+              <h1 className="text-2xl font-bold text-ink font-hand tracking-wide">Projects</h1>
             </header>
             <div className="flex-1 overflow-y-auto pb-24 md:pb-0">
               <ProjectView currentDate={currentDate} />

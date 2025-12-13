@@ -238,6 +238,7 @@ export const TodayPage: React.FC<TodayPageProps> = ({
             </div>
 
             {/* Header - 精简版 */}
+            {/* Header - Refined with Inline Navigation */}
             <header className="shrink-0 px-4 md:px-6 bg-paper z-10 pt-safe md:py-4">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
@@ -249,9 +250,24 @@ export const TodayPage: React.FC<TodayPageProps> = ({
                         )}
 
                         {!activeTagFilter ? (
-                            <h1 className="text-2xl font-bold text-ink font-hand tracking-wide">
-                                {formatDate(currentDate)}
-                            </h1>
+                            <div className="flex items-center gap-2">
+                                <h1 className="text-2xl font-bold text-ink font-hand tracking-wide">
+                                    {formatDate(currentDate)}
+                                </h1>
+                                <div className="flex items-center gap-1 ml-1">
+                                    <button onClick={() => changeDate(-1)} className="p-1 hover:bg-stone-200 rounded-full text-stone-400 hover:text-ink transition-colors">
+                                        <ChevronLeft size={20} />
+                                    </button>
+                                    <button onClick={() => changeDate(1)} className="p-1 hover:bg-stone-200 rounded-full text-stone-400 hover:text-ink transition-colors">
+                                        <ChevronRight size={20} />
+                                    </button>
+                                    {dateKey !== todayKey && (
+                                        <button onClick={() => onDateChange(new Date())} className="p-1 hover:bg-stone-200 rounded-full text-stone-400 hover:text-ink transition-colors" title="Back to Today">
+                                            <RotateCcw size={18} />
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
                         ) : (
                             <div className="flex items-center gap-2">
                                 <span className={`text-sm font-bold px-3 py-1 rounded-full ${getTagStyles(activeTagFilter, tags)}`}>
@@ -261,7 +277,7 @@ export const TodayPage: React.FC<TodayPageProps> = ({
                         )}
                     </div>
 
-                    {/* 右侧工具栏 - 只保留上传下载 */}
+                    {/* Right Toolbar - Only Sync Buttons for Mobile now */}
                     <div className="flex md:hidden items-center gap-1">
                         <button
                             onClick={upload}
@@ -280,50 +296,12 @@ export const TodayPage: React.FC<TodayPageProps> = ({
                             <Download size={20} />
                         </button>
                     </div>
-
-                    {/* 桌面端工具栏 */}
-                    <div className="hidden md:flex items-center gap-2">
-                        {!activeTagFilter && (
-                            <div className="flex items-center gap-4">
-                                {dateKey !== todayKey && (
-                                    <button onClick={() => onDateChange(new Date())} className="p-2 text-stone-400 hover:text-ink hover:bg-stone-100 rounded-full transition-colors" title="Back to Today">
-                                        <RotateCcw size={18} />
-                                    </button>
-                                )}
-                                <div className="flex gap-2">
-                                    <button onClick={() => changeDate(-1)} className="p-2 hover:bg-stone-200 rounded-full text-stone-600 transition-colors">
-                                        <ChevronLeft size={20} />
-                                    </button>
-                                    <button onClick={() => changeDate(1)} className="p-2 hover:bg-stone-200 rounded-full text-stone-600 transition-colors">
-                                        <ChevronRight size={20} />
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-                    </div>
                 </div>
-
-                {/* 日期导航 - 移动端，日期下方靠左对齐 */}
-                {!activeTagFilter && (
-                    <div className="flex items-center gap-2 mt-2 md:hidden">
-                        <button onClick={() => changeDate(-1)} className="p-1.5 hover:bg-stone-200 rounded-full text-stone-500 transition-colors">
-                            <ChevronLeft size={18} />
-                        </button>
-                        <button onClick={() => changeDate(1)} className="p-1.5 hover:bg-stone-200 rounded-full text-stone-500 transition-colors">
-                            <ChevronRight size={18} />
-                        </button>
-                        {dateKey !== todayKey && (
-                            <button onClick={() => onDateChange(new Date())} className="p-1.5 text-stone-400 hover:text-ink hover:bg-stone-100 rounded-full transition-colors" title="回到今天">
-                                <RotateCcw size={16} />
-                            </button>
-                        )}
-                    </div>
-                )}
             </header>
 
             {/* Content */}
             <div className="flex-1 overflow-y-auto no-scrollbar pb-40 md:pb-0">
-                <div className="px-4 md:px-6 pb-6 max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-2 duration-300">
+                <div className="px-4 md:px-6 py-6 max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-2 duration-300">
                     <InlineCreator
                         onSubmit={addEntry}
                         activeDate={dateKey}

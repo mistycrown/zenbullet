@@ -66,15 +66,34 @@ export const addMonths = (date: Date, months: number): Date => {
   return result;
 };
 
-export const getStartOfWeek = (date: Date): Date => {
+
+export const getStartOfWeek = (date: Date, startOnMonday = false): Date => {
   const d = new Date(date);
   const day = d.getDay();
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Adjust when day is sunday
-  return new Date(d.setDate(diff));
+  // If startOnMonday is true: Mon(1)-Sun(0). We want to go back to Monday.
+  // diff = d.getDate() - day + (day === 0 ? -6 : 1); // This logic was for Monday start? Wait.
+  // If day is Monday (1), diff should be 0.
+  // d.getDate() - day + 1. 1 - 1 + 1 = 1. Correct.
+  // If day is Sunday (0), diff should be -6.
+  // d.getDate() - 0 + (-6) = d.getDate() - 6. Correct.
+  // So the OLD logic "day === 0 ? -6 : 1" was ALREADY assuming Monday start?
+  // Let's re-verify.
+  // Standard getDay(): Sun 0, Mon 1, ... Sat 6.
+  // To get Sunday start:
+  // We want to subtract 'day'. Sun(0) -> -0. Mon(1) -> -1.
+
+  if (startOnMonday) {
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+    return new Date(d.setDate(diff));
+  } else {
+    // Sunday start
+    const diff = d.getDate() - day;
+    return new Date(d.setDate(diff));
+  }
 };
 
-export const getWeekDays = (date: Date) => {
-  const start = getStartOfWeek(date);
+export const getWeekDays = (date: Date, startOnMonday = false) => {
+  const start = getStartOfWeek(date, startOnMonday);
   const days = [];
   for (let i = 0; i < 7; i++) {
     days.push(addDays(start, i));
@@ -82,14 +101,27 @@ export const getWeekDays = (date: Date) => {
   return days;
 };
 
-export const getMonthDays = (date: Date) => {
+export const getMonthDays = (date: Date, startOnMonday = false) => {
   const year = date.getFullYear();
   const month = date.getMonth();
   const firstDay = new Date(year, month, 1);
   const lastDay = new Date(year, month + 1, 0);
   const days = [];
 
-  for (let i = 0; i < firstDay.getDay(); i++) {
+  // Calculate padding days
+  // If startOnMonday: Mon(1) needs 0 padding. Sun(0) needs 6 padding.
+  // If startOnSunday: Sun(0) needs 0 padding. Mon(1) needs 1 padding.
+
+  let paddingCount = 0;
+  const dayOfWeek = firstDay.getDay(); // 0-6 Sun-Sat
+
+  if (startOnMonday) {
+    paddingCount = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+  } else {
+    paddingCount = dayOfWeek;
+  }
+
+  for (let i = 0; i < paddingCount; i++) {
     days.push(null);
   }
 

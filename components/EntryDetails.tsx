@@ -253,7 +253,7 @@ const EntryDetails: React.FC<EntryDetailsProps> = ({
 
   return (
     <div className="h-full flex flex-col bg-white overflow-y-auto animate-in slide-in-from-right duration-200">
-      <div className="p-6 border-b border-stone-100 flex justify-between items-center sticky top-0 bg-white z-50 pt-safe md:pt-0 shadow-sm">
+      <div className="px-4 py-4 border-b border-stone-100 flex justify-between items-center sticky top-0 bg-white z-50 pt-safe md:pt-0 shadow-sm">
         <div className="flex items-center gap-3">
           <button onClick={onClose} className="md:hidden text-stone-600 hover:text-ink -ml-2 p-2 rounded-full"><ChevronLeft size={24} /></button>
           <button
@@ -263,9 +263,8 @@ const EntryDetails: React.FC<EntryDetailsProps> = ({
           >
             <PanelRightClose size={20} />
           </button>
-          <h3 className="font-bold text-3xl font-hand text-ink">Details</h3>
+          <h3 className="font-bold text-2xl font-hand text-ink">Details</h3>
         </div>
-        <button onClick={onClose}><X size={20} className="text-stone-400 hover:text-ink" /></button>
       </div>
 
       <div className="p-6 space-y-6 flex-1">

@@ -7,6 +7,12 @@ import { TagProvider, useTagContext } from './TagContext';
 import { SyncProvider, useSyncContext } from './SyncContext';
 
 // Define the shape of the Unified Context (Backward Compatible)
+// Preferences Interface
+interface UserPreferences {
+  startWeekOnMonday: boolean;
+}
+
+// Define the shape of the Unified Context (Backward Compatible)
 interface ZenContextType {
   entries: Entry[];
   tags: Tag[];
@@ -27,6 +33,10 @@ interface ZenContextType {
   importData: (entries: Entry[], tags: Tag[]) => void;
   clearData: (type: 'entries' | 'all') => void; // New method
   restoreDefaults: () => void; // New method
+
+  // Preferences
+  preferences: UserPreferences;
+  updatePreference: (key: keyof UserPreferences, value: any) => void;
 
   // Feedback (Toast)
   toast: any;
@@ -50,6 +60,18 @@ const useAggregatedZenContext = (): ZenContextType => {
   const { entries, addEntry, updateEntry, deleteEntry, batchAddEntries, setEntries } = useEntryContext();
   const { tags, addTag, removeTag, renameTag, reorderTags, setTags } = useTagContext();
   const { isSyncing, lastSyncTime, syncError, config: syncConfig, sync, upload, download, updateConfig: updateSyncConfig } = useSyncContext();
+  const [preferences, setPreferences] = React.useState<UserPreferences>(() => {
+    const saved = localStorage.getItem('zen_preferences');
+    return saved ? JSON.parse(saved) : { startWeekOnMonday: false };
+  });
+
+  React.useEffect(() => {
+    localStorage.setItem('zen_preferences', JSON.stringify(preferences));
+  }, [preferences]);
+
+  const updatePreference = useCallback((key: keyof UserPreferences, value: any) => {
+    setPreferences(prev => ({ ...prev, [key]: value }));
+  }, []);
 
   const importData = useCallback((newEntries: Entry[], newTags: Tag[]) => {
     setEntries(newEntries);
@@ -88,6 +110,8 @@ const useAggregatedZenContext = (): ZenContextType => {
     importData,
     clearData,
     restoreDefaults,
+    preferences,
+    updatePreference,
     toast,
     showToast,
     hideToast,

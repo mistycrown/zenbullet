@@ -3,15 +3,6 @@ import {
     ChevronLeft, ChevronRight, RotateCcw, Sparkles, Inbox, FolderKanban, BookOpen, Search, Calendar, Upload, Download
 } from 'lucide-react';
 import {
-    DndContext,
-    closestCenter,
-    KeyboardSensor,
-    PointerSensor,
-    useSensor,
-    useSensors,
-    DragEndEvent
-} from '@dnd-kit/core';
-import {
     SortableContext,
     sortableKeyboardCoordinates,
     verticalListSortingStrategy
@@ -145,11 +136,7 @@ export const TodayPage: React.FC<TodayPageProps> = ({
         });
     }, [groupedEntries]);
 
-    // DnD Sensors
-    const sensors = useSensors(
-        useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
-        useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
-    );
+
 
     // Handlers
     const handleToggleEntry = (id: string) => {
@@ -343,60 +330,54 @@ export const TodayPage: React.FC<TodayPageProps> = ({
                         activeTag={activeTagFilter}
                     />
 
-                    <DndContext
-                        sensors={sensors}
-                        collisionDetection={closestCenter}
-                        onDragEnd={() => { }}
-                    >
-                        <SortableContext items={viewEntries.map(e => e.id)} strategy={verticalListSortingStrategy}>
-                            {!isListView ? (
-                                <div className="space-y-4">
-                                    {viewEntries.length === 0 && <div className="text-center py-10 text-stone-400 italic">No entries for today. Enjoy the calm.</div>}
+                    <SortableContext items={viewEntries.map(e => e.id)} strategy={verticalListSortingStrategy}>
+                        {!isListView ? (
+                            <div className="space-y-4">
+                                {viewEntries.length === 0 && <div className="text-center py-10 text-stone-400 italic">No entries for today. Enjoy the calm.</div>}
 
-                                    <div className="space-y-2">
-                                        {projectEntries.length > 0 && (
-                                            <div className="mb-4 space-y-3">
-                                                {projectEntries.map(entry => {
-                                                    const subtasks = entries.filter(e => e.parentId === entry.id);
-                                                    return <ProjectCard key={entry.id} project={entry} subtasks={subtasks} tags={tags} onAddSubtask={handleAddSubtask} onUpdateEntry={updateEntry} onToggleEntry={handleToggleEntry} onSelectEntry={onSelectEntry} currentDate={currentDate} isSortable={true} />;
-                                                })}
-                                            </div>
-                                        )}
-                                        {taskEntries.map(entry => (
-                                            <EntryRow key={entry.id} entry={entry} tags={tags} isSelected={selectedEntryId === entry.id} onToggle={handleToggleEntry} onSelect={onSelectEntry} onMoveToTomorrow={handleMoveToTomorrow} onMoveToToday={handleMoveToToday} onUpdate={updateEntry} currentDate={currentDate} />
-                                        ))}
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="space-y-8">
+                                <div className="space-y-2">
                                     {projectEntries.length > 0 && (
-                                        <div>
-                                            <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-3 pl-1">Projects</h3>
-                                            <div className="space-y-3">
-                                                {projectEntries.map(entry => {
-                                                    const subtasks = entries.filter(e => e.parentId === entry.id);
-                                                    return <ProjectCard key={entry.id} project={entry} subtasks={subtasks} tags={tags} onAddSubtask={handleAddSubtask} onUpdateEntry={updateEntry} onToggleEntry={handleToggleEntry} onSelectEntry={onSelectEntry} currentDate={currentDate} isSortable={true} />;
-                                                })}
-                                            </div>
+                                        <div className="mb-4 space-y-3">
+                                            {projectEntries.map(entry => {
+                                                const subtasks = entries.filter(e => e.parentId === entry.id);
+                                                return <ProjectCard key={entry.id} project={entry} subtasks={subtasks} tags={tags} onAddSubtask={handleAddSubtask} onUpdateEntry={updateEntry} onToggleEntry={handleToggleEntry} onSelectEntry={onSelectEntry} currentDate={currentDate} isSortable={true} />;
+                                            })}
                                         </div>
                                     )}
-                                    {sortedGroupKeys.map(dKey => (
-                                        <div key={dKey}>
-                                            <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-3 pl-1">
-                                                {dKey === 'Unscheduled' ? 'Inbox / Unscheduled' : new Date(dKey).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
-                                            </h3>
-                                            <div className="space-y-2">
-                                                {groupedEntries[dKey].map(entry => (
-                                                    <EntryRow key={entry.id} entry={entry} tags={tags} isSelected={selectedEntryId === entry.id} onToggle={handleToggleEntry} onSelect={onSelectEntry} onMoveToTomorrow={handleMoveToTomorrow} onMoveToToday={dKey === 'Unscheduled' ? handleMoveToToday : undefined} onUpdate={updateEntry} currentDate={currentDate} />
-                                                ))}
-                                            </div>
-                                        </div>
+                                    {taskEntries.map(entry => (
+                                        <EntryRow key={entry.id} entry={entry} tags={tags} isSelected={selectedEntryId === entry.id} onToggle={handleToggleEntry} onSelect={onSelectEntry} onMoveToTomorrow={handleMoveToTomorrow} onMoveToToday={handleMoveToToday} onUpdate={updateEntry} currentDate={currentDate} />
                                     ))}
-                                    {viewEntries.length === 0 && <div className="text-center py-10 text-stone-400 italic">No entries found in this list.</div>}
                                 </div>
-                            )}
-                        </SortableContext>
-                    </DndContext>
+                            </div>
+                        ) : (
+                            <div className="space-y-8">
+                                {projectEntries.length > 0 && (
+                                    <div>
+                                        <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-3 pl-1">Projects</h3>
+                                        <div className="space-y-3">
+                                            {projectEntries.map(entry => {
+                                                const subtasks = entries.filter(e => e.parentId === entry.id);
+                                                return <ProjectCard key={entry.id} project={entry} subtasks={subtasks} tags={tags} onAddSubtask={handleAddSubtask} onUpdateEntry={updateEntry} onToggleEntry={handleToggleEntry} onSelectEntry={onSelectEntry} currentDate={currentDate} isSortable={true} />;
+                                            })}
+                                        </div>
+                                    </div>
+                                )}
+                                {sortedGroupKeys.map(dKey => (
+                                    <div key={dKey}>
+                                        <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-3 pl-1">
+                                            {dKey === 'Unscheduled' ? 'Inbox / Unscheduled' : new Date(dKey).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
+                                        </h3>
+                                        <div className="space-y-2">
+                                            {groupedEntries[dKey].map(entry => (
+                                                <EntryRow key={entry.id} entry={entry} tags={tags} isSelected={selectedEntryId === entry.id} onToggle={handleToggleEntry} onSelect={onSelectEntry} onMoveToTomorrow={handleMoveToTomorrow} onMoveToToday={dKey === 'Unscheduled' ? handleMoveToToday : undefined} onUpdate={updateEntry} currentDate={currentDate} />
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+                                {viewEntries.length === 0 && <div className="text-center py-10 text-stone-400 italic">No entries found in this list.</div>}
+                            </div>
+                        )}
+                    </SortableContext>
                 </div>
             </div>
         </div>

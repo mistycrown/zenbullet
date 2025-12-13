@@ -73,6 +73,41 @@ const SimpleMarkdown: React.FC<{ content: string }> = ({ content }) => {
   );
 };
 
+import { useDroppable, useDraggable } from '@dnd-kit/core';
+import { CSS } from '@dnd-kit/utilities';
+
+// Helper for Droppable Day Column
+const DroppableDay = ({ dateIso, children, className }: { dateIso: string, children: React.ReactNode, className?: string }) => {
+  const { setNodeRef, isOver } = useDroppable({
+    id: `day-${dateIso}`,
+  });
+
+  return (
+    <div ref={setNodeRef} className={`${className} ${isOver ? 'bg-blue-50 ring-2 ring-blue-200 ring-inset rounded-lg transition-colors' : ''}`}>
+      {children}
+    </div>
+  );
+};
+
+// Helper for Draggable Weekly Entry
+const DraggableWeeklyEntry = ({ entry, children }: { entry: Entry, children: React.ReactNode }) => {
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    id: entry.id,
+    disabled: (entry as any).isGhost // Disable dragging for ghost entries
+  });
+
+  const style = {
+    transform: CSS.Translate.toString(transform),
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
+      {children}
+    </div>
+  );
+};
+
 const WeeklyView: React.FC<WeeklyViewProps> = ({
   currentDate,
   entries,
@@ -304,71 +339,72 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({
                   </span>
                 </div>
 
-                <div className="flex-1 space-y-3 pt-1 border-b border-stone-50 pb-6 last:border-0 min-w-0">
+                <DroppableDay dateIso={dayIso} className="flex-1 space-y-3 pt-1 border-b border-stone-50 pb-6 last:border-0 min-w-0">
                   {dayEntries.length > 0 ? (
                     dayEntries.map(e => {
                       const isGhost = (e as any).isGhost;
                       const priority = e.priority || 2;
 
                       return (
-                        <div
-                          key={e.id}
-                          onClick={() => !isEditMode && onSelect(e.id)}
-                          className={`flex items-start gap-3 ${isEditMode ? '' : 'cursor-pointer group/item'} ${isGhost ? 'opacity-70' : ''}`}
-                        >
-                          {/* Edit Mode Controls */}
-                          {isEditMode && !isGhost ? (
-                            <div className="flex items-center gap-2 w-full animate-in fade-in duration-200">
-                              <div className="flex flex-col gap-0.5">
-                                <button onClick={() => handleMoveEntry(e, 'up')} className="text-stone-300 hover:text-ink p-0.5 hover:bg-stone-100 rounded" title="Move to previous day"><ArrowUp size={14} /></button>
-                                <button onClick={() => handleMoveEntry(e, 'down')} className="text-stone-300 hover:text-ink p-0.5 hover:bg-stone-100 rounded" title="Move to next day"><ArrowDown size={14} /></button>
-                              </div>
-                              <input
-                                type="text"
-                                value={e.content}
-                                onChange={(ev) => onUpdateEntry && onUpdateEntry(e.id, { content: ev.target.value })}
-                                className="flex-1 bg-stone-50 border border-stone-200 rounded-lg px-3 py-1.5 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all"
-                              />
-                              <button
-                                onClick={() => onDeleteEntry && onDeleteEntry(e.id)}
-                                className="text-stone-300 hover:text-red-500 p-2 hover:bg-red-50 rounded transition-colors"
-                                title="Delete"
-                              >
-                                <Trash2 size={16} />
-                              </button>
-                            </div>
-                          ) : (
-                            // View Mode
-                            <>
-                              <button
-                                onClick={(ev) => { ev.stopPropagation(); !isGhost && onToggle(e.id); }}
-                                className={`mt-0.5 text-stone-400 hover:text-ink transition-colors flex-shrink-0 ${isGhost ? 'cursor-default' : ''}`}
-                              >
-                                {renderIcon(e)}
-                              </button>
-                              <div className="flex-1 min-w-0">
-                                <p className={`text-sm font-medium leading-snug break-words ${e.status !== 'todo' ? 'line-through text-stone-300' : 'text-ink'}`}>
-                                  <span>{e.content}</span>
-                                  {priority >= 3 && (
-                                    <span className={`${getPriorityColor(priority)} tracking-tighter ml-1`}>{getPriorityLabel(priority)}</span>
-                                  )}
-                                </p>
-                                <div className="flex items-center gap-2 mt-1 flex-wrap">
-                                  <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${getTagStyles(e.tag, tags)}`}>
-                                    #{e.tag.toLowerCase()}
-                                  </span>
-                                  {e.recurrence && (
-                                    <div className="flex items-center gap-0.5 text-[10px] text-stone-400 bg-stone-50 px-1 rounded border border-stone-100">
-                                      <Repeat size={10} />
-                                      <span className="capitalize">{e.recurrence}</span>
-                                    </div>
-                                  )}
-                                  {isGhost && <span className="text-[10px] text-stone-400 italic">(Upcoming)</span>}
+                        <DraggableWeeklyEntry key={e.id} entry={e}>
+                          <div
+                            onClick={() => !isEditMode && onSelect(e.id)}
+                            className={`flex items-start gap-3 ${isEditMode ? '' : 'cursor-pointer group/item'} ${isGhost ? 'opacity-70' : ''}`}
+                          >
+                            {/* Edit Mode Controls */}
+                            {isEditMode && !isGhost ? (
+                              <div className="flex items-center gap-2 w-full animate-in fade-in duration-200">
+                                <div className="flex flex-col gap-0.5">
+                                  <button onClick={() => handleMoveEntry(e, 'up')} className="text-stone-300 hover:text-ink p-0.5 hover:bg-stone-100 rounded" title="Move to previous day"><ArrowUp size={14} /></button>
+                                  <button onClick={() => handleMoveEntry(e, 'down')} className="text-stone-300 hover:text-ink p-0.5 hover:bg-stone-100 rounded" title="Move to next day"><ArrowDown size={14} /></button>
                                 </div>
+                                <input
+                                  type="text"
+                                  value={e.content}
+                                  onChange={(ev) => onUpdateEntry && onUpdateEntry(e.id, { content: ev.target.value })}
+                                  className="flex-1 bg-stone-50 border border-stone-200 rounded-lg px-3 py-1.5 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all"
+                                />
+                                <button
+                                  onClick={() => onDeleteEntry && onDeleteEntry(e.id)}
+                                  className="text-stone-300 hover:text-red-500 p-2 hover:bg-red-50 rounded transition-colors"
+                                  title="Delete"
+                                >
+                                  <Trash2 size={16} />
+                                </button>
                               </div>
-                            </>
-                          )}
-                        </div>
+                            ) : (
+                              // View Mode
+                              <>
+                                <button
+                                  onClick={(ev) => { ev.stopPropagation(); !isGhost && onToggle(e.id); }}
+                                  className={`mt-0.5 text-stone-400 hover:text-ink transition-colors flex-shrink-0 ${isGhost ? 'cursor-default' : ''}`}
+                                >
+                                  {renderIcon(e)}
+                                </button>
+                                <div className="flex-1 min-w-0">
+                                  <p className={`text-sm font-medium leading-snug break-words ${e.status !== 'todo' ? 'line-through text-stone-300' : 'text-ink'}`}>
+                                    <span>{e.content}</span>
+                                    {priority >= 3 && (
+                                      <span className={`${getPriorityColor(priority)} tracking-tighter ml-1`}>{getPriorityLabel(priority)}</span>
+                                    )}
+                                  </p>
+                                  <div className="flex items-center gap-2 mt-1 flex-wrap">
+                                    <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${getTagStyles(e.tag, tags)}`}>
+                                      #{e.tag.toLowerCase()}
+                                    </span>
+                                    {e.recurrence && (
+                                      <div className="flex items-center gap-0.5 text-[10px] text-stone-400 bg-stone-50 px-1 rounded border border-stone-100">
+                                        <Repeat size={10} />
+                                        <span className="capitalize">{e.recurrence}</span>
+                                      </div>
+                                    )}
+                                    {isGhost && <span className="text-[10px] text-stone-400 italic">(Upcoming)</span>}
+                                  </div>
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        </DraggableWeeklyEntry>
                       );
                     })
                   ) : (
@@ -391,7 +427,7 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({
                       <Plus size={14} /> Add Task
                     </button>
                   )}
-                </div>
+                </DroppableDay>
               </div>
             );
           })}

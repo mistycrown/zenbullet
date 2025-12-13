@@ -40,7 +40,9 @@ const EntryRow: React.FC<EntryRowProps> = ({
     setNodeRef,
     transform,
     transition,
-    isDragging
+    isDragging,
+    attributes,
+    listeners
   } = useSortable({ id: entry.id, disabled: entry.isGhost });
 
   const style = {
@@ -175,6 +177,8 @@ const EntryRow: React.FC<EntryRowProps> = ({
     <div
       ref={setNodeRef}
       style={style}
+      {...attributes}
+      {...listeners}
       onClick={() => onSelect(entry.id)}
       className={`group flex items-start gap-3 rounded-xl transition-all duration-200 cursor-pointer border relative ${compact ? 'p-2 mb-1 text-sm items-center' : 'p-3 mb-2'
         } ${isSelected

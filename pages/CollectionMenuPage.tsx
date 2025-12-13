@@ -14,7 +14,7 @@ export const CollectionMenuPage: React.FC = () => {
 
     return (
         <div className="flex-1 flex flex-col h-full bg-paper">
-            <header className="shrink-0 flex items-center justify-between px-4 md:px-6 bg-paper z-10 pt-safe md:pt-0">
+            <header className="shrink-0 flex items-center justify-between px-4 md:px-6 bg-paper z-10 pt-safe md:py-5">
                 <h1 className="text-2xl font-bold text-ink font-hand tracking-wide">Collection</h1>
                 <button onClick={() => navigate('/settings')} className="p-2 text-stone-400 hover:text-ink hover:bg-stone-100 rounded-full transition-colors md:hidden">
                     <Settings size={20} />

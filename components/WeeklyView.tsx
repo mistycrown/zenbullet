@@ -87,7 +87,8 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({
   onUpdateEntry,
   onNavigateToReviews,
   onDeleteEntry,
-  onAddEntry
+  onAddEntry,
+  isCompact = false
 }) => {
   const [isEditMode, setIsEditMode] = useState(false);
 
@@ -164,7 +165,7 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({
   const handleQuickAdd = (dateStr: string) => {
     if (!onAddEntry) return;
     onAddEntry({
-      content: 'New Task',
+      content: '',
       type: 'task',
       status: 'todo',
       tag: 'Inbox',
@@ -173,18 +174,33 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({
     });
   };
 
+  const handleToggleEditMode = () => {
+    if (isEditMode) {
+      // Exiting edit mode: cleanup empty entries
+      weekEntries.forEach(e => {
+        const isGhost = (e as any).isGhost;
+        if (!isGhost &&
+          ['task', 'event', 'note'].includes(e.type) &&
+          (!e.content || !e.content.trim())) {
+          if (onDeleteEntry) onDeleteEntry(e.id);
+        }
+      });
+    }
+    setIsEditMode(!isEditMode);
+  };
+
   return (
     <div className="h-full flex flex-col relative">
       {/* Floating Action Button for Edit Mode */}
       <button
-        onClick={() => setIsEditMode(!isEditMode)}
+        onClick={handleToggleEditMode}
         className={`fixed z-30 bottom-24 right-4 md:bottom-8 md:right-8 p-3 rounded-full shadow-lg hover:scale-105 transition-all ${isEditMode ? 'bg-blue-600 text-white' : 'bg-ink text-white'}`}
         title={isEditMode ? "Finish Editing" : "Quick Edit"}
       >
         {isEditMode ? <Check size={24} /> : <Pencil size={24} />}
       </button>
 
-      <div className="flex items-center justify-between mb-2 md:mb-4 md:border-b md:border-stone-100 pb-2 md:pb-4 px-4 md:px-0 pt-safe md:pt-0">
+      <div className={`flex items-center justify-between mb-2 ${isCompact ? 'mb-2' : 'md:mb-4'} md:border-b md:border-stone-100 pb-2 ${isCompact ? 'pb-2' : 'md:pb-4'} px-4 md:px-0 pt-safe md:pt-0`}>
         <div className="flex items-center gap-3">
           {onToggleSidebar && (
             <button
@@ -196,7 +212,7 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({
             </button>
           )}
           <div className="hidden md:block">
-            <h2 className="text-xl font-bold text-ink">Week {weekNumber} of {year}</h2>
+            <h2 className={`${isCompact ? 'text-lg' : 'text-xl'} font-bold text-ink`}>Week {weekNumber} of {year}</h2>
             <span className="text-xs font-semibold text-stone-400 uppercase tracking-wide">Weekly</span>
           </div>
 
@@ -230,7 +246,7 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({
       <div className="flex-1 overflow-y-auto no-scrollbar px-4 md:px-0">
 
         {/* Weekly Entry Link Section */}
-        <div className="md:pl-[4.5rem] md:pr-2 mb-2">
+        <div className={`${isCompact ? 'pl-2' : 'md:pl-[4.5rem]'} md:pr-2 mb-2`}>
           {!reviewEntry ? (
             <button
               onClick={handleFocusClick}
@@ -260,7 +276,7 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({
           )}
         </div>
 
-        <div className="my-2 border-b border-stone-100 border-dashed md:ml-[4.5rem]"></div>
+        <div className={`my-2 border-b border-stone-100 border-dashed ${isCompact ? '' : 'md:ml-[4.5rem]'}`}></div>
 
         <div className="space-y-8 pb-20 md:pb-0">
           {weekDays.map(day => {
@@ -274,16 +290,16 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({
             );
 
             return (
-              <div key={dayIso} className="flex gap-4 md:gap-6 group">
+              <div key={dayIso} className={`flex ${isCompact ? 'gap-2' : 'gap-4 md:gap-6'} group`}>
                 <div
                   onClick={() => onDateClick(day)}
-                  className="w-10 md:w-12 flex flex-col items-center pt-1 cursor-pointer flex-shrink-0"
+                  className={`${isCompact ? 'w-8' : 'w-10 md:w-12'} flex flex-col items-center pt-1 cursor-pointer flex-shrink-0`}
                   title="Jump to this date"
                 >
                   <span className={`text-xs font-bold uppercase mb-0.5 ${isToday ? 'text-blue-600' : 'text-stone-400'}`}>
-                    {day.toLocaleDateString('en-US', { weekday: 'short' })}
+                    {day.toLocaleDateString('en-US', { weekday: 'short' }).slice(0, 3)}
                   </span>
-                  <span className={`text-lg font-bold leading-none ${isToday ? 'bg-blue-600 text-white w-8 h-8 flex items-center justify-center rounded-full shadow-sm' : 'text-ink'}`}>
+                  <span className={`text-lg font-bold leading-none ${isToday ? 'bg-blue-600 text-white w-7 h-7 flex items-center justify-center rounded-full shadow-sm' : 'text-ink'}`}>
                     {day.getDate()}
                   </span>
                 </div>

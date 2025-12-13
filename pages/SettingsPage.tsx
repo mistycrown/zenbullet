@@ -30,7 +30,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
 
     return (
         <div className="flex-1 flex flex-col h-full bg-paper">
-            <header className="shrink-0 flex items-center gap-4 px-4 md:px-6 bg-paper z-10 pt-safe md:pt-0">
+            <header className="shrink-0 flex items-center gap-4 px-4 md:px-6 bg-paper z-10 pt-safe md:py-5">
                 {(isNested || isMobile) && (
                     <button
                         onClick={onBack}

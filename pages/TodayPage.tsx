@@ -191,7 +191,7 @@ export const TodayPage: React.FC<TodayPageProps> = ({
     if (isMobileListsView) {
         return (
             <div className="flex-1 flex flex-col h-full">
-                <header className="shrink-0 flex items-center justify-between px-4 md:px-6 bg-paper z-10 pt-safe md:pt-0">
+                <header className="shrink-0 flex items-center justify-between px-4 md:px-6 bg-paper z-10 pt-safe md:py-5">
                     <h1 className="text-2xl font-bold text-ink font-hand tracking-wide">Collection</h1>
                 </header>
                 <div className="p-4 md:p-6 space-y-2 flex-1 overflow-y-auto">
@@ -251,7 +251,7 @@ export const TodayPage: React.FC<TodayPageProps> = ({
             </div>
 
             {/* Header - 精简版 */}
-            <header className="shrink-0 px-4 md:px-6 bg-paper z-10 pt-safe md:pt-0">
+            <header className="shrink-0 px-4 md:px-6 bg-paper z-10 pt-safe md:py-4">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         {/* Mobile Back Button if filter active */}

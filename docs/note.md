@@ -4,3 +4,4 @@ npm run electron:build
 
 npm run dev
 
+npm run electron:dev

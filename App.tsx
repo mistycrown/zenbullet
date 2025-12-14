@@ -254,9 +254,6 @@ export default function App() {
 
         <Route path="/calendar" element={
           <div className="flex-1 flex flex-col h-full bg-paper">
-            <header className="shrink-0 flex items-center justify-between px-6 py-5 bg-paper z-10 hidden md:flex pt-safe">
-              <h1 className="text-3xl font-bold text-ink font-hand tracking-wide">Calendar</h1>
-            </header>
             <div className="flex-1 overflow-hidden">
               <CalendarView
                 currentDate={currentDate}

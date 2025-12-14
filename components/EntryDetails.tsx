@@ -118,12 +118,11 @@ const EntryDetails: React.FC<EntryDetailsProps> = ({
   if (entry.type === 'weekly-review') {
     return (
       <div className="h-full flex flex-col bg-white overflow-y-auto">
-        <div className="p-6 border-b border-stone-100 flex justify-between items-center sticky top-0 bg-white z-50 pt-safe md:pt-0 shadow-sm">
+        <div className="px-6 py-6 border-b border-stone-100 flex justify-between items-center sticky top-0 bg-white z-50 pt-safe shadow-sm">
           <div className="flex items-center gap-3">
-            <button onClick={onToggleSidebar} className="text-stone-400 hover:text-ink"><PanelRightClose size={20} /></button>
+            <button onClick={onClose} className="text-stone-600 hover:text-ink -ml-2 p-2 rounded-full hover:bg-stone-100 transition-colors"><ChevronLeft size={24} /></button>
             <h3 className="font-bold text-xl font-hand text-ink">Weekly Review</h3>
           </div>
-          <button onClick={onClose}><X size={20} className="text-stone-400 hover:text-ink" /></button>
         </div>
         <div className="p-6">
           <p className="text-sm text-stone-500 mb-4">Focus for week of {entry.date}</p>
@@ -148,13 +147,11 @@ const EntryDetails: React.FC<EntryDetailsProps> = ({
 
     return (
       <div className="h-full flex flex-col bg-white overflow-y-auto animate-in slide-in-from-right duration-200">
-        <div className="p-6 border-b border-stone-100 flex justify-between items-center sticky top-0 bg-white z-50 pt-safe md:pt-0 shadow-sm">
+        <div className="px-6 py-6 border-b border-stone-100 flex justify-between items-center sticky top-0 bg-white z-50 pt-safe shadow-sm">
           <div className="flex items-center gap-3">
-            <button onClick={onClose} className="md:hidden text-stone-600 hover:text-ink -ml-2 p-2 rounded-full"><ChevronLeft size={24} /></button>
-            <button onClick={onToggleSidebar} className="hidden md:block text-stone-400 hover:text-ink p-1 rounded hover:bg-stone-100"><PanelRightClose size={20} /></button>
+            <button onClick={onClose} className="text-stone-600 hover:text-ink -ml-2 p-2 rounded-full hover:bg-stone-100 transition-colors"><ChevronLeft size={24} /></button>
             <h3 className="font-bold text-xl font-hand text-ink">Project Details</h3>
           </div>
-          <button onClick={onClose}><X size={20} className="text-stone-400 hover:text-ink" /></button>
         </div>
 
         <div className="p-6 space-y-6 flex-1">
@@ -253,16 +250,9 @@ const EntryDetails: React.FC<EntryDetailsProps> = ({
 
   return (
     <div className="h-full flex flex-col bg-white overflow-y-auto animate-in slide-in-from-right duration-200">
-      <div className="px-4 py-4 border-b border-stone-100 flex justify-between items-center sticky top-0 bg-white z-50 pt-safe md:pt-0 shadow-sm">
+      <div className="px-6 py-6 border-b border-stone-100 flex justify-between items-center sticky top-0 bg-white z-50 pt-safe shadow-sm">
         <div className="flex items-center gap-3">
-          <button onClick={onClose} className="md:hidden text-stone-600 hover:text-ink -ml-2 p-2 rounded-full"><ChevronLeft size={24} /></button>
-          <button
-            onClick={onToggleSidebar}
-            className="hidden md:block text-stone-400 hover:text-ink p-1 rounded hover:bg-stone-100 transition-colors"
-            title="Collapse Sidebar"
-          >
-            <PanelRightClose size={20} />
-          </button>
+          <button onClick={onClose} className="text-stone-600 hover:text-ink -ml-2 p-2 rounded-full hover:bg-stone-100 transition-colors"><ChevronLeft size={24} /></button>
           <h3 className="font-bold text-2xl font-hand text-ink">Details</h3>
         </div>
       </div>

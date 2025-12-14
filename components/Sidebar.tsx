@@ -73,7 +73,20 @@ const Sidebar: React.FC<SidebarProps> = ({
               <Inbox size={18} />
               {!isCollapsed && <span>Inbox</span>}
             </div>
-            {!isCollapsed && inboxCount > 0 && <span className="bg-stone-200 text-stone-600 text-xs px-2 py-0.5 rounded-full">{inboxCount}</span>}
+            {!isCollapsed && (
+              <div className="flex items-center gap-1">
+                {inboxCount > 0 && <span className="bg-stone-200 text-stone-600 text-xs px-2 py-0.5 rounded-full">{inboxCount}</span>}
+                {onOpenAIModal && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onOpenAIModal(); }}
+                    className="p-1 rounded hover:bg-purple-50 text-purple-600 hover:text-purple-700 transition-colors"
+                    title="Smart Add"
+                  >
+                    <Sparkles size={16} />
+                  </button>
+                )}
+              </div>
+            )}
             {isCollapsed && inboxCount > 0 && (
               <div className="absolute top-2 right-2 w-2 h-2 bg-red-400 rounded-full"></div>
             )}
@@ -99,17 +112,6 @@ const Sidebar: React.FC<SidebarProps> = ({
             </button>
           ))}
 
-          {/* AI Smart Add Button */}
-          {onOpenAIModal && (
-            <button
-              onClick={onOpenAIModal}
-              className={`w-full flex items-center gap-3 rounded-xl transition-colors text-sm font-medium text-purple-600 hover:bg-purple-50 hover:text-purple-700 ${isCollapsed ? 'justify-center py-3' : 'px-3 py-2.5'}`}
-              title="Smart Add"
-            >
-              <Sparkles size={18} />
-              {!isCollapsed && <span>Smart Add</span>}
-            </button>
-          )}
 
         </nav>
       </div>

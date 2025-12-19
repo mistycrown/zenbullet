@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { X, Repeat, Trash2, Square, Circle, Minus, CheckSquare, XSquare, PanelRightClose, SkipForward, Ban, AlertCircle, Palette, ChevronLeft } from 'lucide-react';
+import { X, Repeat, Trash2, Square, Circle, Minus, CheckSquare, XSquare, PanelRightClose, SkipForward, Ban, AlertCircle, Palette, ChevronLeft, Calendar, CalendarPlus } from 'lucide-react';
 import { Entry, EntryType, EntryStatus, Tag, TagColor } from '../types';
 import CustomSelect from './CustomSelect';
 import CalendarSelect from './CalendarSelect';
@@ -395,11 +395,51 @@ const EntryDetails: React.FC<EntryDetailsProps> = ({
         <div className="space-y-4">
           <div>
             <label className="text-xs font-bold text-stone-400 uppercase tracking-wider block mb-2">Date</label>
-            <CalendarSelect
-              value={entry.date}
-              onChange={(date) => onUpdate(entry.id, { date })}
-              className="w-full"
-            />
+            <div className="flex gap-2 items-center">
+              <div className="flex-1">
+                <CalendarSelect
+                  value={entry.date}
+                  onChange={(date) => onUpdate(entry.id, { date })}
+                  className="w-full"
+                />
+              </div>
+              <div className="flex gap-1">
+                <button
+                  onClick={() => onUpdate(entry.id, { date: null })}
+                  className="p-2 rounded-lg border border-stone-200 hover:border-stone-300 hover:bg-stone-50 text-stone-400 hover:text-red-500 transition-colors outline-none focus:outline-none"
+                  title="清除日期"
+                >
+                  <X size={16} />
+                </button>
+                <button
+                  onClick={() => {
+                    const today = new Date();
+                    const year = today.getFullYear();
+                    const month = String(today.getMonth() + 1).padStart(2, '0');
+                    const day = String(today.getDate()).padStart(2, '0');
+                    onUpdate(entry.id, { date: `${year}-${month}-${day}` });
+                  }}
+                  className="p-2 rounded-lg border border-stone-200 hover:border-blue-300 hover:bg-blue-50 text-stone-400 hover:text-blue-600 transition-colors outline-none focus:outline-none"
+                  title="今天"
+                >
+                  <Calendar size={16} />
+                </button>
+                <button
+                  onClick={() => {
+                    const tomorrow = new Date();
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    const year = tomorrow.getFullYear();
+                    const month = String(tomorrow.getMonth() + 1).padStart(2, '0');
+                    const day = String(tomorrow.getDate()).padStart(2, '0');
+                    onUpdate(entry.id, { date: `${year}-${month}-${day}` });
+                  }}
+                  className="p-2 rounded-lg border border-stone-200 hover:border-green-300 hover:bg-green-50 text-stone-400 hover:text-green-600 transition-colors outline-none focus:outline-none"
+                  title="明天"
+                >
+                  <CalendarPlus size={16} />
+                </button>
+              </div>
+            </div>
             {!entry.date && (
               <p className="text-[10px] text-stone-400 mt-1 pl-1">Inbox (Unscheduled)</p>
             )}

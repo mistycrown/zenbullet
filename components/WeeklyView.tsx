@@ -391,24 +391,13 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({
                                   {renderIcon(e)}
                                 </button>
                                 <div className="flex-1 min-w-0">
-                                  <p className={`text-sm font-medium leading-snug break-words ${e.status !== 'todo' ? 'line-through text-stone-300' : 'text-ink'}`}>
-                                    <span>{e.content}</span>
+                                  <p className={`text-sm font-medium leading-snug break-words truncate ${e.status !== 'todo' ? 'line-through text-stone-300' : 'text-ink'}`}>
+                                    <span>{e.content.split('\n')[0]}</span>
                                     {priority >= 3 && (
                                       <span className={`${getPriorityColor(priority)} tracking-tighter ml-1`}>{getPriorityLabel(priority)}</span>
                                     )}
                                   </p>
-                                  <div className="flex items-center gap-2 mt-1 flex-wrap">
-                                    <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${getTagStyles(e.tag, tags)}`}>
-                                      #{e.tag.toLowerCase()}
-                                    </span>
-                                    {e.recurrence && (
-                                      <div className="flex items-center gap-0.5 text-[10px] text-stone-400 bg-stone-50 px-1 rounded border border-stone-100">
-                                        <Repeat size={10} />
-                                        <span className="capitalize">{e.recurrence}</span>
-                                      </div>
-                                    )}
-                                    {isGhost && <span className="text-[10px] text-stone-400 italic">(Upcoming)</span>}
-                                  </div>
+
                                 </div>
                               </>
                             )}

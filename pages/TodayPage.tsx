@@ -125,13 +125,32 @@ export const TodayPage: React.FC<TodayPageProps> = ({
             if (!groups[key]) groups[key] = [];
             groups[key].push(e);
         });
+        // 对每个分组内的任务按完成状态排序：未完成的在前
+        Object.keys(groups).forEach(key => {
+            groups[key].sort((a, b) => {
+                if (a.status === 'todo' && b.status !== 'todo') return -1;
+                if (a.status !== 'todo' && b.status === 'todo') return 1;
+                return 0;
+            });
+        });
         return groups;
     }, [taskEntries, isListView]);
 
     const sortedGroupKeys = useMemo(() => {
         return Object.keys(groupedEntries).sort((a, b) => {
+            // 检查每个分组中是否有未完成的任务
+            const hasUnfinishedA = groupedEntries[a].some(e => e.status === 'todo');
+            const hasUnfinishedB = groupedEntries[b].some(e => e.status === 'todo');
+
+            // 优先显示有未完成任务的分组
+            if (hasUnfinishedA && !hasUnfinishedB) return -1;
+            if (!hasUnfinishedA && hasUnfinishedB) return 1;
+
+            // 在相同完成状态下，Unscheduled（无日期）在前
             if (a === 'Unscheduled') return -1;
             if (b === 'Unscheduled') return 1;
+
+            // 有日期的按日期排序
             return a.localeCompare(b);
         });
     }, [groupedEntries]);
